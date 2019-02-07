@@ -8,6 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		EFABDABC21F6B108005B08EA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFABDABB21F6B108005B08EA /* main.cpp */; };
+		EFABDAC421F6B171005B08EA /* libSDL2-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EFABDAC321F6B171005B08EA /* libSDL2-2.0.0.dylib */; };
+		EFABDAC621F6B181005B08EA /* libSDL2_image-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EFABDAC521F6B181005B08EA /* libSDL2_image-2.0.0.dylib */; };
+		EFABDAC821F6B83A005B08EA /* libSDL2_mixer-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EFABDAC721F6B83A005B08EA /* libSDL2_mixer-2.0.0.dylib */; };
+		EFABDACA21F6B847005B08EA /* libSDL2_net-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EFABDAC921F6B847005B08EA /* libSDL2_net-2.0.0.dylib */; };
+		EFABDACD21F6E417005B08EA /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFABDACC21F6E417005B08EA /* Game.cpp */; };
+		EFABDAD021F9F606005B08EA /* TextureManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFABDACF21F9F606005B08EA /* TextureManager.cpp */; };
+		EFABDAD321FB17CE005B08EA /* GameObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFABDAD221FB17CE005B08EA /* GameObject.cpp */; };
+		EFABDAE321FD3420005B08EA /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFABDAE121FD3420005B08EA /* Player.cpp */; };
+		EFABDAE721FD42F9005B08EA /* libSDL2_ttf-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EFABDAD921FCAB58005B08EA /* libSDL2_ttf-2.0.0.dylib */; };
+		EFABDAEE21FD873C005B08EA /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFABDAEC21FD873C005B08EA /* Ball.cpp */; };
+		EFB3CBB822015A5700AAD8DB /* ScreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFB3CBB622015A5700AAD8DB /* ScreenManager.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,8 +34,29 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		EF1168DB220BFC6A0053E9BB /* libSDL2_gfx-1.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libSDL2_gfx-1.0.0.dylib"; path = "../../../../../usr/local/Cellar/sdl2_gfx/1.0.4/lib/libSDL2_gfx-1.0.0.dylib"; sourceTree = "<group>"; };
 		EFABDAB821F6B108005B08EA /* PikachuVolleyball */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PikachuVolleyball; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFABDABB21F6B108005B08EA /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		EFABDAC321F6B171005B08EA /* libSDL2-2.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libSDL2-2.0.0.dylib"; path = "../../../../../usr/local/Cellar/sdl2/2.0.9/lib/libSDL2-2.0.0.dylib"; sourceTree = "<group>"; };
+		EFABDAC521F6B181005B08EA /* libSDL2_image-2.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libSDL2_image-2.0.0.dylib"; path = "../../../../../usr/local/Cellar/sdl2_image/2.0.4/lib/libSDL2_image-2.0.0.dylib"; sourceTree = "<group>"; };
+		EFABDAC721F6B83A005B08EA /* libSDL2_mixer-2.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libSDL2_mixer-2.0.0.dylib"; path = "../../../../../usr/local/Cellar/sdl2_mixer/2.0.4/lib/libSDL2_mixer-2.0.0.dylib"; sourceTree = "<group>"; };
+		EFABDAC921F6B847005B08EA /* libSDL2_net-2.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libSDL2_net-2.0.0.dylib"; path = "../../../../../usr/local/Cellar/sdl2_net/2.0.1/lib/libSDL2_net-2.0.0.dylib"; sourceTree = "<group>"; };
+		EFABDACB21F6E31C005B08EA /* Game.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Game.h; sourceTree = "<group>"; };
+		EFABDACC21F6E417005B08EA /* Game.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Game.cpp; sourceTree = "<group>"; };
+		EFABDACE21F9F582005B08EA /* TextureManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextureManager.h; sourceTree = "<group>"; };
+		EFABDACF21F9F606005B08EA /* TextureManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextureManager.cpp; sourceTree = "<group>"; };
+		EFABDAD121FB1632005B08EA /* GameObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameObject.h; sourceTree = "<group>"; };
+		EFABDAD221FB17CE005B08EA /* GameObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GameObject.cpp; sourceTree = "<group>"; };
+		EFABDAD921FCAB58005B08EA /* libSDL2_ttf-2.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libSDL2_ttf-2.0.0.dylib"; path = "../../../../../usr/local/Cellar/sdl2_ttf/2.0.14/lib/libSDL2_ttf-2.0.0.dylib"; sourceTree = "<group>"; };
+		EFABDADC21FD31E4005B08EA /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; path = images; sourceTree = "<group>"; };
+		EFABDADE21FD31F8005B08EA /* music */ = {isa = PBXFileReference; lastKnownFileType = folder; path = music; sourceTree = "<group>"; };
+		EFABDAE021FD320B005B08EA /* OdibeeSansRegular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = OdibeeSansRegular.ttf; sourceTree = "<group>"; };
+		EFABDAE121FD3420005B08EA /* Player.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Player.cpp; sourceTree = "<group>"; };
+		EFABDAE221FD3420005B08EA /* Player.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Player.h; sourceTree = "<group>"; };
+		EFABDAEC21FD873C005B08EA /* Ball.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Ball.cpp; sourceTree = "<group>"; };
+		EFABDAED21FD873C005B08EA /* Ball.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Ball.h; sourceTree = "<group>"; };
+		EFB3CBB622015A5700AAD8DB /* ScreenManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScreenManager.cpp; sourceTree = "<group>"; };
+		EFB3CBB722015A5700AAD8DB /* ScreenManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScreenManager.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +64,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EFABDAE721FD42F9005B08EA /* libSDL2_ttf-2.0.0.dylib in Frameworks */,
+				EFABDACA21F6B847005B08EA /* libSDL2_net-2.0.0.dylib in Frameworks */,
+				EFABDAC821F6B83A005B08EA /* libSDL2_mixer-2.0.0.dylib in Frameworks */,
+				EFABDAC621F6B181005B08EA /* libSDL2_image-2.0.0.dylib in Frameworks */,
+				EFABDAC421F6B171005B08EA /* libSDL2-2.0.0.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -43,6 +80,7 @@
 			children = (
 				EFABDABA21F6B108005B08EA /* PikachuVolleyball */,
 				EFABDAB921F6B108005B08EA /* Products */,
+				EFABDAC221F6B171005B08EA /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -57,9 +95,45 @@
 		EFABDABA21F6B108005B08EA /* PikachuVolleyball */ = {
 			isa = PBXGroup;
 			children = (
+				EFABDADC21FD31E4005B08EA /* images */,
+				EFABDADE21FD31F8005B08EA /* music */,
+				EFABDADF21FD320B005B08EA /* fonts */,
 				EFABDABB21F6B108005B08EA /* main.cpp */,
+				EFABDAD121FB1632005B08EA /* GameObject.h */,
+				EFABDAD221FB17CE005B08EA /* GameObject.cpp */,
+				EFABDAE221FD3420005B08EA /* Player.h */,
+				EFABDAE121FD3420005B08EA /* Player.cpp */,
+				EFABDAED21FD873C005B08EA /* Ball.h */,
+				EFABDAEC21FD873C005B08EA /* Ball.cpp */,
+				EFABDACB21F6E31C005B08EA /* Game.h */,
+				EFABDACC21F6E417005B08EA /* Game.cpp */,
+				EFABDACE21F9F582005B08EA /* TextureManager.h */,
+				EFABDACF21F9F606005B08EA /* TextureManager.cpp */,
+				EFB3CBB722015A5700AAD8DB /* ScreenManager.h */,
+				EFB3CBB622015A5700AAD8DB /* ScreenManager.cpp */,
 			);
 			path = PikachuVolleyball;
+			sourceTree = "<group>";
+		};
+		EFABDAC221F6B171005B08EA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EF1168DB220BFC6A0053E9BB /* libSDL2_gfx-1.0.0.dylib */,
+				EFABDAD921FCAB58005B08EA /* libSDL2_ttf-2.0.0.dylib */,
+				EFABDAC921F6B847005B08EA /* libSDL2_net-2.0.0.dylib */,
+				EFABDAC721F6B83A005B08EA /* libSDL2_mixer-2.0.0.dylib */,
+				EFABDAC521F6B181005B08EA /* libSDL2_image-2.0.0.dylib */,
+				EFABDAC321F6B171005B08EA /* libSDL2-2.0.0.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EFABDADF21FD320B005B08EA /* fonts */ = {
+			isa = PBXGroup;
+			children = (
+				EFABDAE021FD320B005B08EA /* OdibeeSansRegular.ttf */,
+			);
+			path = fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -118,7 +192,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EFABDAD321FB17CE005B08EA /* GameObject.cpp in Sources */,
+				EFABDAE321FD3420005B08EA /* Player.cpp in Sources */,
 				EFABDABC21F6B108005B08EA /* main.cpp in Sources */,
+				EFABDACD21F6E417005B08EA /* Game.cpp in Sources */,
+				EFABDAD021F9F606005B08EA /* TextureManager.cpp in Sources */,
+				EFABDAEE21FD873C005B08EA /* Ball.cpp in Sources */,
+				EFB3CBB822015A5700AAD8DB /* ScreenManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,6 +320,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = /usr/local/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/sdl2/2.0.9/lib,
+					/usr/local/Cellar/sdl2_image/2.0.4/lib,
+					/usr/local/Cellar/sdl2_mixer/2.0.4/lib,
+					/usr/local/Cellar/sdl2_net/2.0.1/lib,
+					/usr/local/Cellar/sdl2_ttf/2.0.14/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -248,6 +337,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = /usr/local/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/sdl2/2.0.9/lib,
+					/usr/local/Cellar/sdl2_image/2.0.4/lib,
+					/usr/local/Cellar/sdl2_mixer/2.0.4/lib,
+					/usr/local/Cellar/sdl2_net/2.0.1/lib,
+					/usr/local/Cellar/sdl2_ttf/2.0.14/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
