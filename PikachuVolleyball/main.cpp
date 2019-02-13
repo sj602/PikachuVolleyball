@@ -2,8 +2,6 @@
 using namespace std;
 const int GAME_WIDTH = 800, GAME_HEIGHT = 600;
 
-Game *game = nullptr;
-
 int main()
 {
     // FPS
@@ -13,9 +11,13 @@ int main()
     int frameTime;
     
     // Game Start
-    game = new Game();
+    Game *game = new Game();
     game->init("Pikachu Volleyball", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, GAME_WIDTH, GAME_HEIGHT, false);
     
+    while(game->selectingMode())
+    {
+        game->displayStartScreen();
+    }
     while(game->running())
     {
         // FPS

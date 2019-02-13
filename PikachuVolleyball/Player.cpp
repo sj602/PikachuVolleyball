@@ -136,9 +136,7 @@ void Player::Update()
     // ALWAYS ON GRAVITY
     if(ypos+height < GAME_HEIGHT)
         yVel += GRAVITY;
- 
-    std::cout << "yPos: " << ypos << std::endl;
-    
+     
     if(flag == 'L' && ypos+height == GAME_HEIGHT)
         objTexture = TextureManager::LoadTexture("images/right_look_pikachu.png");
     else if(flag == 'R' && ypos+height == GAME_HEIGHT)
@@ -173,16 +171,6 @@ void Player::Reset(const char _flag)
         xpos = GAME_WIDTH-width;
         ypos = GAME_HEIGHT-height;
     }
-};
-
-float Player::GetXpos()
-{
-    return xpos;
-};
-
-float Player::GetYpos()
-{
-    return ypos;
 };
 
 float Player::GetRadius()

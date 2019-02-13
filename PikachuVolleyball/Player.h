@@ -21,8 +21,7 @@ public:
     void MovePressed(const Uint8 *keystate);
     void MoveReleased(const Uint8 *keystate);
 
-    float GetXpos();
-    float GetYpos();
+    // getters
     float GetRadius();
     
     // move to private later on...

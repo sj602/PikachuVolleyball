@@ -6,7 +6,6 @@ class Ball: public GameObject
 private:
     float xVel;
     float yVel;
-//    int angle;
     double angle;
     
 public:
@@ -21,14 +20,8 @@ public:
     void Render(double angle);
 
     // getters
-    float GetXpos();
-    float GetYpos();
     float GetRadius();
     double GetAngle();
-    
-    //setters
-    void SetXpos(float x);
-    void SetYpos(float y);
     
     // move to private later on..
     Mix_Chunk *groundSound;

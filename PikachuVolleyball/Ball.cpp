@@ -77,13 +77,11 @@ bool Ball::CheckCollision(Player* p1, Player* p2)
         std::cout << "p1 touched!" << std::endl;
         if(ballX < p1X)
         {
-            xVel = (p1X - ballX) / 5;
+            xVel = (p1X - ballX) / 8.5;
             xVel = -xVel;
-            std::cout << "back xVel:" << xVel << std::endl;
         }else if(ballX > p1X)
         {
-            xVel = (ballX - p1X) / 5;
-            std::cout << "front xVel:" << xVel << std::endl;
+            xVel = (ballX - p1X) / 8.5;
         }
         yVel = -yVel;
         
@@ -93,24 +91,72 @@ bool Ball::CheckCollision(Player* p1, Player* p2)
     if(p2RealDistance <= p2TouchedDistance)
     {
         std::cout << "p2 touched!" << std::endl;
+        if(ballX < p2X)
+        {
+            xVel = (p2X - ballX) / 9;
+            xVel = -xVel;
+        }else if(ballX > p2X)
+        {
+            xVel = (ballX - p2X) / 9;
+        }
         yVel = -yVel;
         
         return true;
     }
     
     
-    // pole left x : 398
-    // pole right x : 408
+    // pole left x : 395
+    // pole right x : 410
     // pole top y : 290
     
-    // if the ball touches the top of the pole
-    if(398-width < GetXpos() && GetXpos() < 410 && GetYpos()+height == 290)
+    // if the ball touches the left side of the pole
+//    if( ( ( 394.5<GetXpos()+width ) || ( 395.5<GetXpos()+width ) ) && (290<(GetYpos()+height)))
+//    if((394.5<GetXpos()+width) && (GetXpos()+width<395.5) && (290<(GetYpos()+height)))
+//    {
+//        std::cout << "pole left touched!" << std::endl;
+//        xVel = -xVel;
+//        return true;
+//    }
+//    // if the ball touches the right side of the pole
+//    if((409.5<GetXpos()) && (GetXpos()<410.5) && (290<(GetYpos())))
+//    {
+//        std::cout << "pole right touched!" << std::endl;
+//        xVel = -xVel;
+//        return true;
+//    }
+    if(394<=GetXpos()+width && 396>=GetXpos()+width)
     {
-        std::cout << "pole top touched!" << std::endl;
-        yVel = -yVel;
-        
-        return true;
+        if(290<=GetYpos()+height)
+        {
+            std::cout << "pole left touched!" << std::endl;
+            std::cout << "GetXpos()+width" << GetXpos()+width << " GetYpos()" << GetYpos() << std::endl;
+            xVel = -xVel;
+            SetXpos(GetXpos()-3);
+            return true;
+        }
     }
+    // if the ball touches the right side of the pole
+    if(409<=GetXpos() && 411>=GetXpos())
+    {
+        if(290<=GetYpos()+height)
+        {
+            std::cout << "pole right touched!" << std::endl;
+            std::cout << "GetXpos()+width" << GetXpos()+width << " GetYpos()" << GetYpos() << std::endl;
+            xVel = -xVel;
+            SetXpos(GetXpos()+3);
+            return true;
+        }
+    }
+
+    // if the ball touches the top of the pole
+//    if((395<GetXpos()+width) && (410>GetXpos()) && ( (289.8<(GetYpos()+height)) && (290.2<(GetYpos()+height)) ))
+//    {
+//        std::cout << "pole top touched!" << std::endl;
+//        yVel = -yVel;
+//        SDL_Delay(1000);
+//        std::cout << "GetXpos()+width" << GetXpos()+width << " GetYpos()+height" << GetYpos()+height << std::endl;
+//        return true;
+//    }
 
     
 //    if(GetXpos() + width < 398 && GetYpos() + height < 291)
@@ -134,7 +180,6 @@ bool Ball::CheckGround(Player* p1, Player* p2)
     if(xpos < 400 && ypos + height > 600)
     {
         Mix_PlayChannel(-1, groundSound, 0);
-        std::cout << "p1 lost" << std::endl;
         p2->SetScore(p2->GetScore()+1);
         this->Reset('R');
         p1->Reset('L');
@@ -142,7 +187,6 @@ bool Ball::CheckGround(Player* p1, Player* p2)
     }else if(xpos > 400 && ypos + height > 600)
     {
         Mix_PlayChannel(-1, groundSound, 0);
-        std::cout << "p2 lost" << std::endl;
         p1->SetScore(p1->GetScore()+1);
         this->Reset('L');
         p2->Reset('R');
@@ -154,8 +198,6 @@ bool Ball::CheckGround(Player* p1, Player* p2)
 void Ball::Update()
 {
     // basic movement inside the window
-//    std::cout << "ball x: " << xpos << std::endl;
-//    std::cout << "ball y: " << ypos << std::endl;
     xpos += xVel;
     ypos += yVel;
     yVel += GRAVITY;
@@ -168,22 +210,18 @@ void Ball::Update()
     
     if(xpos < 0)
     {
-        std::cout << "touched left!" << std::endl;
         xVel = -xVel;
     }
     if(xpos + width > GAME_WIDTH)
     {
-        std::cout << "touched right!" << std::endl;
         xVel = -xVel;
     }
     if(ypos + height < 0)
     {
-        std::cout << "touched top!" << std::endl;
         yVel = -yVel;
     }
     if(ypos + height > GAME_HEIGHT)
     {
-        std::cout << "touched ground!" << std::endl;
         yVel = -yVel;
     }
     
@@ -195,9 +233,15 @@ void Ball::Update()
 
 void Ball::Reset(const char _flag)
 {
+    if(_flag == 'L')
+    {
+        xpos = 60;
+    } else if(_flag == 'R')
+    {
+        xpos = GAME_WIDTH-width-60;
+    }
     
-    xpos = 0;
-    ypos = 0;
+    ypos = 60;
     xVel = 0;
     yVel = 2;
 };
@@ -207,16 +251,6 @@ void Ball::Render(double angle)
     SDL_RenderCopyEx(Game::renderer, objTexture, &srcRect, &destRect, angle, NULL, SDL_FLIP_NONE);
 }
 
-float Ball::GetXpos()
-{
-    return xpos;
-};
-
-float Ball::GetYpos()
-{
-    return ypos;
-};
-
 float Ball::GetRadius()
 {
     return radius;
@@ -225,14 +259,4 @@ float Ball::GetRadius()
 double Ball::GetAngle()
 {
     return angle;
-};
-
-void Ball::SetXpos(float x)
-{
-    xpos = x;
-};
-
-void Ball::SetYpos(float y)
-{
-    ypos = y;
 };

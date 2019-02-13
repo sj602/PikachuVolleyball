@@ -10,6 +10,9 @@ class Game
 {
 private:
     bool isRunning = false;
+    bool isSelecting = true;
+    bool isSingle = false;
+    bool isMulti = false;
     Mix_Music *bgm;
     SDL_Window *window;
     SDL_Texture *backgroundImage;
@@ -19,6 +22,8 @@ public:
     ~Game();
     
     void init(const char *title, int xpos, int ypos, int width, int height, bool fullscreen);
+    bool selectingMode();
+    void displayStartScreen();
     void handleEvents();
     void update();
     void render();

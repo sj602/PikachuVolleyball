@@ -19,6 +19,8 @@
 		EFABDAE721FD42F9005B08EA /* libSDL2_ttf-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EFABDAD921FCAB58005B08EA /* libSDL2_ttf-2.0.0.dylib */; };
 		EFABDAEE21FD873C005B08EA /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFABDAEC21FD873C005B08EA /* Ball.cpp */; };
 		EFB3CBB822015A5700AAD8DB /* ScreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFB3CBB622015A5700AAD8DB /* ScreenManager.cpp */; };
+		EFC141282212C08A002A750C /* MultiPlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFC141262212C08A002A750C /* MultiPlay.cpp */; };
+		EFC1412B2212F6F2002A750C /* StartScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFC141292212F6F2002A750C /* StartScreen.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -57,6 +59,10 @@
 		EFABDAED21FD873C005B08EA /* Ball.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Ball.h; sourceTree = "<group>"; };
 		EFB3CBB622015A5700AAD8DB /* ScreenManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScreenManager.cpp; sourceTree = "<group>"; };
 		EFB3CBB722015A5700AAD8DB /* ScreenManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScreenManager.h; sourceTree = "<group>"; };
+		EFC141262212C08A002A750C /* MultiPlay.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MultiPlay.cpp; sourceTree = "<group>"; };
+		EFC141272212C08A002A750C /* MultiPlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiPlay.h; sourceTree = "<group>"; };
+		EFC141292212F6F2002A750C /* StartScreen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StartScreen.cpp; sourceTree = "<group>"; };
+		EFC1412A2212F6F2002A750C /* StartScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StartScreen.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +113,10 @@
 				EFABDAEC21FD873C005B08EA /* Ball.cpp */,
 				EFABDACB21F6E31C005B08EA /* Game.h */,
 				EFABDACC21F6E417005B08EA /* Game.cpp */,
+				EFC1412A2212F6F2002A750C /* StartScreen.h */,
+				EFC141292212F6F2002A750C /* StartScreen.cpp */,
+				EFC141272212C08A002A750C /* MultiPlay.h */,
+				EFC141262212C08A002A750C /* MultiPlay.cpp */,
 				EFABDACE21F9F582005B08EA /* TextureManager.h */,
 				EFABDACF21F9F606005B08EA /* TextureManager.cpp */,
 				EFB3CBB722015A5700AAD8DB /* ScreenManager.h */,
@@ -199,6 +209,8 @@
 				EFABDAD021F9F606005B08EA /* TextureManager.cpp in Sources */,
 				EFABDAEE21FD873C005B08EA /* Ball.cpp in Sources */,
 				EFB3CBB822015A5700AAD8DB /* ScreenManager.cpp in Sources */,
+				EFC141282212C08A002A750C /* MultiPlay.cpp in Sources */,
+				EFC1412B2212F6F2002A750C /* StartScreen.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -320,6 +332,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				GCC_NO_COMMON_BLOCKS = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -337,6 +350,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				GCC_NO_COMMON_BLOCKS = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

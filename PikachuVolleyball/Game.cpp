@@ -1,4 +1,6 @@
 #include "Game.h"
+#include "StartScreen.h"
+//#include "MultiPlay.h"
 #include "TextureManager.h"
 #include "ScreenManager.h"
 #include "GameObject.h"
@@ -10,7 +12,7 @@ using namespace std;
 const int GAME_WIDTH = 800, GAME_HEIGHT = 600;
 const int PLAYER_WIDTH = 100, PLAYER_HEIGHT = 100;
 const int BALL_WIDTH = 100, BALL_HEIGHT = 100;
-const int SCORE_WIDTH = 100, SCORE_HEIGHT = 100;
+const int SCORE_WIDTH = 50, SCORE_HEIGHT = 50;
 
 Player *player1;
 Player *player2;
@@ -23,6 +25,8 @@ GameObject *flame;
 
 SDL_Renderer* Game::renderer = nullptr;
 const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+
+StartScreen *startScreen = nullptr;
 
 Game::Game(){};
 Game::~Game(){};
@@ -58,25 +62,32 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
             cout << "could not play music! SDL_mixer Error: " << Mix_GetError() << endl;
     }
     
-    // Background image Init
-    SDL_RenderCopy(renderer, TextureManager::LoadTexture("images/background.png"), NULL, NULL);
-
-    // Background img Init
     if(!(IMG_Init( IMG_INIT_PNG ) & IMG_INIT_PNG))
         cout << "Could not create window: " << IMG_GetError() << endl;
-
     
-    isRunning = true;
-    
+    startScreen = new StartScreen(renderer);
     player1 = new Player("images/right_look_pikachu.png", PLAYER_WIDTH, PLAYER_HEIGHT, 0, GAME_HEIGHT-PLAYER_HEIGHT, 'L');
     player2 = new Player("images/left_look_pikachu.png", PLAYER_WIDTH, PLAYER_HEIGHT, GAME_WIDTH-PLAYER_WIDTH, GAME_HEIGHT-PLAYER_HEIGHT, 'R');
-    map = new GameObject("images/background.png", GAME_WIDTH, GAME_HEIGHT);
+    map = new GameObject("images/background.png", GAME_WIDTH, GAME_HEIGHT, 0, 0, "img");
     pole = new GameObject("images/pole.png", 9, 300, 400, 380);
     ball = new Ball("images/ball.png", BALL_WIDTH, BALL_HEIGHT, 60, 60);
     score1 = new GameObject(0, SCORE_WIDTH, SCORE_HEIGHT, 0, 0);
-    score2 = new GameObject(0, SCORE_WIDTH, SCORE_HEIGHT, 730, 0);
+    score2 = new GameObject(0, SCORE_WIDTH, SCORE_HEIGHT, 750, 0);
     flame = new GameObject("images/flame.png", 100, 100, 0, 0);
+    
+    isRunning = true;
+};
 
+bool Game::selectingMode()
+{
+    return isSelecting;
+};
+
+void Game::displayStartScreen()
+{
+    startScreen->handleEvents(keystate, &isSelecting, &isSingle, &isMulti);
+    startScreen->Update();
+    startScreen->Render();
 };
 
 void Game::handleEvents()
@@ -91,18 +102,18 @@ void Game::handleEvents()
             
         case SDL_KEYDOWN:
             player1->MovePressed(keystate);
-//            player2->MovePressed(keystate);
+            player2->MovePressed(keystate);
             break;
             
         case SDL_KEYUP:
             player1->MoveReleased(keystate);
-//            player2->MoveReleased(keystate);
+            player2->MoveReleased(keystate);
             break;
-
+            
         case SDL_MOUSEMOTION:
             int x, y;
             SDL_GetMouseState(&x, &y);
-            std::cout << "x: " << x << " y: " << y << std::endl;
+//            std::cout << "mouse x: " << x << " mouse y: " << y << std::endl;
             
             break;
             
@@ -115,7 +126,6 @@ void Game::handleEvents()
         default:
             break;
     }
-    
 };
 
 void Game::update()
@@ -133,11 +143,11 @@ void Game::update()
         SDL_SetTextureAlphaMod(fadingScreen, 120);
         SDL_RenderCopy(renderer, fadingScreen, NULL, NULL);
 //        ScreenManager::FadeInAndOut(renderer);
-//        SDL_Delay(3000);
     }
+    
     score1->Update(player1->GetScore());
     score2->Update(player2->GetScore());
-    flame->Update();
+//    flame->Update();
 };
 
 void Game::render()
@@ -149,10 +159,9 @@ void Game::render()
     player1->Render();
     player2->Render();
     ball->Render(ball->GetAngle());
-//    pole->Render();
     score1->Render();
     score2->Render();
-    flame->Render();
+//    flame->Render();
     
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderDrawLine(renderer, ball->GetXpos()+50, ball->GetYpos()+50, player1->GetXpos()+50, player1->GetYpos()+50);
@@ -160,11 +169,12 @@ void Game::render()
     SDL_RenderPresent(renderer);
 };
 
-void Game::reset()
-{
-    player1->Reset('L');
-    player2->Reset('R');
-};
+//void Game::reset()
+//{
+//    player1->Reset('L');
+//    player2->Reset('R');
+////    ball->Reset();
+//};
 
 void Game::clean()
 {
