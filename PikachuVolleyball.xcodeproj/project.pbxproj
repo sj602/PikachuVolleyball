@@ -19,7 +19,8 @@
 		EFABDAE721FD42F9005B08EA /* libSDL2_ttf-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EFABDAD921FCAB58005B08EA /* libSDL2_ttf-2.0.0.dylib */; };
 		EFABDAEE21FD873C005B08EA /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFABDAEC21FD873C005B08EA /* Ball.cpp */; };
 		EFB3CBB822015A5700AAD8DB /* ScreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFB3CBB622015A5700AAD8DB /* ScreenManager.cpp */; };
-		EFC141282212C08A002A750C /* MultiPlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFC141262212C08A002A750C /* MultiPlay.cpp */; };
+		EFB68FAE2217D5B700A91FC8 /* Screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFB68FAC2217D5B700A91FC8 /* Screen.cpp */; };
+		EFC141282212C08A002A750C /* MultiPlaySettingScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFC141262212C08A002A750C /* MultiPlaySettingScreen.cpp */; };
 		EFC1412B2212F6F2002A750C /* StartScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFC141292212F6F2002A750C /* StartScreen.cpp */; };
 /* End PBXBuildFile section */
 
@@ -59,8 +60,10 @@
 		EFABDAED21FD873C005B08EA /* Ball.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Ball.h; sourceTree = "<group>"; };
 		EFB3CBB622015A5700AAD8DB /* ScreenManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScreenManager.cpp; sourceTree = "<group>"; };
 		EFB3CBB722015A5700AAD8DB /* ScreenManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScreenManager.h; sourceTree = "<group>"; };
-		EFC141262212C08A002A750C /* MultiPlay.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MultiPlay.cpp; sourceTree = "<group>"; };
-		EFC141272212C08A002A750C /* MultiPlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiPlay.h; sourceTree = "<group>"; };
+		EFB68FAC2217D5B700A91FC8 /* Screen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Screen.cpp; sourceTree = "<group>"; };
+		EFB68FAD2217D5B700A91FC8 /* Screen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Screen.h; sourceTree = "<group>"; };
+		EFC141262212C08A002A750C /* MultiPlaySettingScreen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MultiPlaySettingScreen.cpp; sourceTree = "<group>"; };
+		EFC141272212C08A002A750C /* MultiplaySettingScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiplaySettingScreen.h; sourceTree = "<group>"; };
 		EFC141292212F6F2002A750C /* StartScreen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StartScreen.cpp; sourceTree = "<group>"; };
 		EFC1412A2212F6F2002A750C /* StartScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StartScreen.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -113,10 +116,12 @@
 				EFABDAEC21FD873C005B08EA /* Ball.cpp */,
 				EFABDACB21F6E31C005B08EA /* Game.h */,
 				EFABDACC21F6E417005B08EA /* Game.cpp */,
+				EFB68FAD2217D5B700A91FC8 /* Screen.h */,
+				EFB68FAC2217D5B700A91FC8 /* Screen.cpp */,
 				EFC1412A2212F6F2002A750C /* StartScreen.h */,
 				EFC141292212F6F2002A750C /* StartScreen.cpp */,
-				EFC141272212C08A002A750C /* MultiPlay.h */,
-				EFC141262212C08A002A750C /* MultiPlay.cpp */,
+				EFC141272212C08A002A750C /* MultiplaySettingScreen.h */,
+				EFC141262212C08A002A750C /* MultiPlaySettingScreen.cpp */,
 				EFABDACE21F9F582005B08EA /* TextureManager.h */,
 				EFABDACF21F9F606005B08EA /* TextureManager.cpp */,
 				EFB3CBB722015A5700AAD8DB /* ScreenManager.h */,
@@ -207,9 +212,10 @@
 				EFABDABC21F6B108005B08EA /* main.cpp in Sources */,
 				EFABDACD21F6E417005B08EA /* Game.cpp in Sources */,
 				EFABDAD021F9F606005B08EA /* TextureManager.cpp in Sources */,
+				EFB68FAE2217D5B700A91FC8 /* Screen.cpp in Sources */,
 				EFABDAEE21FD873C005B08EA /* Ball.cpp in Sources */,
 				EFB3CBB822015A5700AAD8DB /* ScreenManager.cpp in Sources */,
-				EFC141282212C08A002A750C /* MultiPlay.cpp in Sources */,
+				EFC141282212C08A002A750C /* MultiPlaySettingScreen.cpp in Sources */,
 				EFC1412B2212F6F2002A750C /* StartScreen.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

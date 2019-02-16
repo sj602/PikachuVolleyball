@@ -9,6 +9,7 @@ private:
         
     int score;
     char flag;
+    bool isDashing = false;
     
 public:
     Player(const char* textureSheet, int w, int h, float x, float y, const char _flag);
@@ -27,7 +28,6 @@ public:
     // move to private later on...
     Mix_Chunk *jumpSound;
     Mix_Chunk *dashSound;
-    Mix_Chunk *spikeSound;
     
     Uint32 previousTime = 0;
     Uint32 currentTime = SDL_GetTicks();

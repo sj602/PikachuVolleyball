@@ -20,12 +20,32 @@ int main()
     }
     while(game->running())
     {
+        std::cout << "game is running!" << std::endl;
+
         // FPS
         frameStart = SDL_GetTicks();
         
-        game->handleEvents();
-        game->update();
-        game->render();
+        if(game->singleMode())
+        {
+            std::cout << "singleMode running!" << std::endl;
+            game->handleEvents();
+            game->update();
+            game->render();
+        }
+        if(game->multiMode())
+        {
+            std::cout << "multiMode running!" << std::endl;
+
+            while(game->settingMultiplay())
+            {
+                std::cout << "setting multiMode running!" << std::endl;
+
+                game->displayMultiplaySettingScreen();
+            }
+            game->handleEvents();
+            game->update();
+            game->render();
+        }
         
         frameTime = SDL_GetTicks() - frameStart;
         if(frameDelay > frameTime)
