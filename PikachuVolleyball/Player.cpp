@@ -5,14 +5,14 @@ const int GAME_WIDTH = 800, GAME_HEIGHT = 600;
 const float GRAVITY = 0.3;
 const int JUMP_YVEL = -13;
 const int LEFT_MOVE_XVEL = -4, RIGHT_MOVE_XVEL = 4;
-const int LEFT_DASH_XVEL = -6, RIGHT_DASH_XVEL = 6, DASH_YVEL = -2;
+const int LEFT_DASH_XVEL = -7, RIGHT_DASH_XVEL = 7, DASH_YVEL = -4;
 
 Player::Player(const char *textureSheet, int w, int h, float x, float y, const char _flag) : GameObject(textureSheet, w, h, x, y)
 {
     jumpSound = Mix_LoadWAV("music/jump.ogg");
     dashSound = Mix_LoadWAV("music/dash.ogg");
 
-    objTexture = TextureManager::LoadTexture(textureSheet);
+    objTexture = TextureManager::loadTexture(textureSheet);
     
     width = w;
     height = h;
@@ -22,9 +22,16 @@ Player::Player(const char *textureSheet, int w, int h, float x, float y, const c
 
     xVel = 0;
     yVel = 0;
-    
     score = 0;
-    flag = _flag; // for Left or Right player
+    
+    flag = _flag; // for Left or Right or AI player
+    if(flag == 'A')
+    {
+        xVel = LEFT_MOVE_XVEL;
+        name = "Computer";
+    }
+    if(flag == 'L')
+        name = "Player";
     
     // for initial position
     srcRect.w = 400;
@@ -39,9 +46,11 @@ Player::Player(const char *textureSheet, int w, int h, float x, float y, const c
 };
 
 Player::~Player()
-{};
+{
+    std::cout << "Player deconstructor()" << std::endl;
+};
 
-void Player::MovePressed(const Uint8 *keystate)
+void Player::movePressed(const Uint8 *keystate)
 {
     
     if(keystate[SDL_SCANCODE_UP] && ypos == GAME_HEIGHT-height) // jump and from ground only
@@ -50,12 +59,12 @@ void Player::MovePressed(const Uint8 *keystate)
         yVel = JUMP_YVEL;
     }
     
-    if(keystate[SDL_SCANCODE_LEFT]) // left
+    if(keystate[SDL_SCANCODE_LEFT] && !isDashing) // left
         if((flag == 'L' && xpos > 5) || (flag == 'R' && xpos > GAME_WIDTH/2))
         {
             xVel = LEFT_MOVE_XVEL;
         }
-    if(keystate[SDL_SCANCODE_RIGHT]) // right
+    if(keystate[SDL_SCANCODE_RIGHT] && !isDashing) // right
         if((flag == 'L' && xpos+width < GAME_WIDTH/2) || (flag == 'R' && xpos+width < GAME_WIDTH-5))
         {
             xVel = RIGHT_MOVE_XVEL;
@@ -64,7 +73,8 @@ void Player::MovePressed(const Uint8 *keystate)
     if(keystate[SDL_SCANCODE_LEFT] && keystate[SDL_SCANCODE_SPACE]) // left dash
         if((flag == 'L' && xpos > 0 && ypos + height == GAME_HEIGHT) || (flag == 'R' && xpos > GAME_WIDTH/2 && ypos + height == GAME_HEIGHT))
         {
-            objTexture = TextureManager::LoadTexture("images/left_dash_pikachu.png");
+            SDL_DestroyTexture(objTexture);
+            objTexture = TextureManager::loadTexture("images/left_dash_pikachu.png");
             Mix_PlayChannel(-1, dashSound, 0);
             xVel = -1; // dummy value for handling dashing
             yVel = DASH_YVEL;
@@ -74,7 +84,8 @@ void Player::MovePressed(const Uint8 *keystate)
     if(keystate[SDL_SCANCODE_RIGHT] && keystate[SDL_SCANCODE_SPACE]) // right dash
         if((flag == 'L' && xpos > 0 && ypos + height == GAME_HEIGHT) || (flag == 'R' && xpos > GAME_WIDTH/2 && ypos + height == GAME_HEIGHT))
         {
-            objTexture = TextureManager::LoadTexture("images/right_dash_pikachu.png");
+            SDL_DestroyTexture(objTexture);
+            objTexture = TextureManager::loadTexture("images/right_dash_pikachu.png");
             Mix_PlayChannel(-1, dashSound, 0);
             xVel = 1; // dummy value for handling dashing
             yVel = DASH_YVEL;
@@ -84,29 +95,28 @@ void Player::MovePressed(const Uint8 *keystate)
     if(keystate[SDL_SCANCODE_LEFT] && keystate[SDL_SCANCODE_LSHIFT]) // left spike
         if((flag == 'L' && xpos > 0) || (flag == 'R' && xpos > 400))
         {
-            GameObject* flame = new GameObject("images/flame.png", 100, 100, GetXpos()-20, GetYpos()-20);
+            GameObject* flame = new GameObject("images/flame.png", 100, 100, getXpos()-20, getYpos()-20);
             delete flame;
         }
     if(keystate[SDL_SCANCODE_RIGHT] && keystate[SDL_SCANCODE_LSHIFT]) // right spike
         if((flag == 'L' && xpos > 0) || (flag == 'R' && xpos > 400))
         {
-            GameObject* flame = new GameObject("images/flame.png", 100, 100, GetXpos()-20, GetYpos()-20);
+            GameObject* flame = new GameObject("images/flame.png", 100, 100, getXpos()-20, getYpos()-20);
             delete flame;
         }
 
 };
 
-void Player::MoveReleased(const Uint8 *keystate)
+void Player::moveReleased(const Uint8 *keystate)
 {
     if(!keystate[SDL_SCANCODE_LEFT] && !keystate[SDL_SCANCODE_RIGHT])
     {
         xVel = 0;
-        std::cout << "left or right key released!" << std::endl;
     }
 };
 
 
-void Player::Update()
+void Player::update()
 {
     xpos += xVel;
     ypos += yVel;
@@ -121,16 +131,16 @@ void Player::Update()
         xpos = (GAME_WIDTH/2)-width;
         xVel = 0;
     }
-    if((flag == 'R' && xpos < GAME_WIDTH/2))
-    {
-        xpos = GAME_WIDTH/2;
-        xVel = 0;
-    }
-    if((flag == 'R' && xpos+width > GAME_WIDTH))
-    {
-        xpos = GAME_WIDTH-width;
-        xVel = 0;
-    }
+//    if((flag == 'R' && xpos < GAME_WIDTH/2))
+//    {
+//        xpos = GAME_WIDTH/2;
+//        xVel = 0;
+//    }
+//    if((flag == 'R' && xpos+width > GAME_WIDTH))
+//    {
+//        xpos = GAME_WIDTH-width;
+//        xVel = 0;
+//    }
     
     // Prevent player falling over the ground
     if(ypos+height > GAME_HEIGHT)
@@ -142,18 +152,13 @@ void Player::Update()
     if(ypos+height < GAME_HEIGHT)
         yVel += GRAVITY;
     
-    std::cout << "isDashing: " << isDashing << std::endl;
     // Dashing
     if(isDashing)
     {
-        std::cout << "xVel1: " << xVel << std::endl;
         if(xVel < 0)
             xVel = LEFT_DASH_XVEL;
         if(xVel > 0)
             xVel = RIGHT_DASH_XVEL;
-        std::cout << "xVel2: " << xVel << std::endl;
-        SDL_Delay(5000);
-
     }
     if(isDashing && yVel == 0) // once if dash, it won't stop until the player is on the ground.
     {
@@ -162,26 +167,35 @@ void Player::Update()
     }
      
     if(flag == 'L' && ypos+height == GAME_HEIGHT)
-        objTexture = TextureManager::LoadTexture("images/right_look_pikachu.png");
+    {
+        SDL_DestroyTexture(objTexture);
+        objTexture = TextureManager::loadTexture("images/right_look_pikachu.png");
+    }
     else if(flag == 'R' && ypos+height == GAME_HEIGHT)
-        objTexture = TextureManager::LoadTexture("images/left_look_pikachu.png");
-    
+    {
+        SDL_DestroyTexture(objTexture);
+        objTexture = TextureManager::loadTexture("images/left_look_pikachu.png");
+    }
+
     // draw the player
     destRect.x = xpos;
     destRect.y = ypos;
+    
+    if(flag == 'A')
+        actAI();
 };
 
-int Player::GetScore()
+int Player::getScore()
 {
     return score;
 };
 
-void Player::SetScore(int _score)
+void Player::setScore(int _score)
 {
     score = _score;
 };
 
-void Player::Reset(const char _flag)
+void Player::reset(const char _flag)
 {
     xVel = 0;
     yVel = 0;
@@ -190,15 +204,49 @@ void Player::Reset(const char _flag)
     {
         xpos = 0;
         ypos = GAME_HEIGHT-height;
-    }else
+    }else if(_flag == 'R')
     {
+        xpos = GAME_WIDTH-width;
+        ypos = GAME_HEIGHT-height;
+    }else if(_flag == 'A')
+    {
+        xVel = LEFT_MOVE_XVEL;
         xpos = GAME_WIDTH-width;
         ypos = GAME_HEIGHT-height;
     }
 };
 
-float Player::GetRadius()
+float Player::getRadius()
 {
     return radius;
+};
+
+char Player::getFlag()
+{
+    return flag;
+};
+
+std::string Player::getName()
+{
+    return name;
+};
+
+void Player::actAI()
+{
+    if(xpos < GAME_WIDTH/2)
+    {
+        xpos = GAME_WIDTH/2;
+        xVel = RIGHT_MOVE_XVEL;
+    }
+    if(xpos+width > GAME_WIDTH)
+    {
+        xpos = GAME_WIDTH-width;
+        xVel = LEFT_MOVE_XVEL;
+    }
+    
+    // jump randomly(at 1/50 chances)
+    int random = rand() % 50+ 1;
+    if(random == 1 && ypos == GAME_HEIGHT-height)
+        yVel = JUMP_YVEL;
 };
 

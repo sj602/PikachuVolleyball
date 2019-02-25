@@ -8,11 +8,11 @@ const int SPIKE_RADIUS = 20;
 const float GRAVITY = 0.1;
 const int BASIC_BOUNCE_VEL = -8;
 const int LEFT_SPIKE_XVEL = -13, RIGHT_SPIKE_XVEL = 13, DOWN_SPIKE_XVEL = 10, DOWN_SPIKE_YVEL = 20;
-const int BASIC_SPIKE_XVEL = 7, BASIC_SPIKE_YVEL = 5, SPIKE_YVEL = -1;
+const int BASIC_SPIKE_XVEL = 10, BASIC_SPIKE_YVEL = 5, SPIKE_YVEL = -1;
 const int ROTATION_ANGLE = 5;
 const int RESET_LEFT_XPOS = 60, RESET_RIGHT_XPOS = GAME_WIDTH-60, RESET_YPOS = 60;
-const int TRAILING_PREV = 3;
-const int TRAILING_PREV_PREV = 6;
+const int TRAILING_PREV = 3, TRAILING_PREV_PREV = 6;
+const int FLAME_WIDTH = 50, FLAME_HEIGHT = 50;
 
 // ground y : 535
 // pole left x : 398
@@ -21,10 +21,10 @@ const int TRAILING_PREV_PREV = 6;
 
 Ball::Ball(const char *textureSheet, int w, int h, float x, float y) : GameObject(textureSheet, w, h, x, y)
 {
-    objTexture = TextureManager::LoadTexture(textureSheet);
-    trailingTexture1 = TextureManager::LoadTexture("images/ball_alpha.png");
-    trailingTexture2 = TextureManager::LoadTexture("images/ball_blue.png");
-    flame = new GameObject("images/flame.png", 100, 100, 0, 0, "img");
+    objTexture = TextureManager::loadTexture(textureSheet);
+    trailingTexture1 = TextureManager::loadTexture("images/ball_alpha.png");
+    trailingTexture2 = TextureManager::loadTexture("images/ball_blue.png");
+    flame = new GameObject("images/flame.png", FLAME_WIDTH, FLAME_HEIGHT, NULL, NULL, "img");
 
     groundSound = Mix_LoadWAV("music/ground.ogg");
     spikeSound = Mix_LoadWAV("music/spike.ogg");
@@ -52,22 +52,25 @@ Ball::Ball(const char *textureSheet, int w, int h, float x, float y) : GameObjec
 
 Ball::~Ball()
 {
+    std::cout << "Ball deconstructor()" << std::endl;
     delete flame;
+    SDL_DestroyTexture(trailingTexture1);
+    SDL_DestroyTexture(trailingTexture2);
 };
 
-bool Ball::CheckCollision(Player* p1, Player* p2, const Uint8 *keystate)
+bool Ball::checkCollision(Player* p1, Player* p2, const Uint8 *keystate)
 {
-    int ballX = GetXpos()+50;
-    int ballY = GetYpos()+50;
-    int p1X = p1->GetXpos()+50;
-    int p1Y = p1->GetYpos()+50;
-    int p2X = p2->GetXpos()+50;
-    int p2Y = p2->GetYpos()+50;
+    int ballX = getXpos()+50;
+    int ballY = getYpos()+50;
+    int p1X = p1->getXpos()+50;
+    int p1Y = p1->getYpos()+50;
+    int p2X = p2->getXpos()+50;
+    int p2Y = p2->getYpos()+50;
     
-    double p1RealDistance = sqrt(pow(ballX - p1X, 2) + pow(ballY - p1Y, 2));
-    double p1TouchedDistance = GetRadius() + p1->GetRadius();
-    double p2RealDistance = sqrt(pow(ballX - p2X, 2) + pow(ballY - p2Y, 2));
-    double p2TouchedDistance = GetRadius() + p2->GetRadius();
+    float p1RealDistance = sqrt(pow(ballX - p1X, 2) + pow(ballY - p1Y, 2));
+    float p1TouchedDistance = getRadius() + p1->getRadius();
+    float p2RealDistance = sqrt(pow(ballX - p2X, 2) + pow(ballY - p2Y, 2));
+    float p2TouchedDistance = getRadius() + p2->getRadius();
 
     //if the ball touches the player..
     if(p1RealDistance <= p1TouchedDistance)
@@ -110,7 +113,11 @@ bool Ball::CheckCollision(Player* p1, Player* p2, const Uint8 *keystate)
     {
         if(keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_RIGHT])
         {
-            flame->Update();
+            setFlamePos(ballX, ballY, p1X, p1Y, p2X, p2Y);
+            flameOn = true;
+            flameStartTime = SDL_GetTicks();
+            flame->update();
+            
             setTrailing();
 
             std::cout << "p1RealDistance: " << p1RealDistance << " p1TouchedDistance: " << p1TouchedDistance << std::endl;
@@ -121,7 +128,11 @@ bool Ball::CheckCollision(Player* p1, Player* p2, const Uint8 *keystate)
         }
         if(keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_DOWN])
         {
-            flame->Update();
+            setFlamePos(ballX, ballY, p1X, p1Y, p2X, p2Y);
+            flameOn = true;
+            flameStartTime = SDL_GetTicks();
+            flame->update();
+            
             setTrailing();
 
             std::cout << "p1RealDistance: " << p1RealDistance << " p1TouchedDistance: " << p1TouchedDistance << std::endl;
@@ -132,7 +143,11 @@ bool Ball::CheckCollision(Player* p1, Player* p2, const Uint8 *keystate)
         }
         if(keystate[SDL_SCANCODE_LSHIFT])
         {
-            flame->Update();
+            setFlamePos(ballX, ballY, p1X, p1Y, p2X, p2Y);
+            flameOn = true;
+            flameStartTime = SDL_GetTicks();
+            flame->update();
+            
             setTrailing();
 
             std::cout << "p1RealDistance: " << p1RealDistance << " p1TouchedDistance: " << p1TouchedDistance << std::endl;
@@ -155,73 +170,46 @@ bool Ball::CheckCollision(Player* p1, Player* p2, const Uint8 *keystate)
     // pole left x : 395
     // pole right x : 410
     // pole top y : 290
-    
-    // if the ball touches the left side of the pole
-//    if( ( ( 394.5<GetXpos()+width ) || ( 395.5<GetXpos()+width ) ) && (290<(GetYpos()+height)))
-//    if((394.5<GetXpos()+width) && (GetXpos()+width<395.5) && (290<(GetYpos()+height)))
-//    {
-//        std::cout << "pole left touched!" << std::endl;
-//        xVel = -xVel;
-//        return true;
-//    }
-//    // if the ball touches the right side of the pole
-//    if((409.5<GetXpos()) && (GetXpos()<410.5) && (290<(GetYpos())))
-//    {
-//        std::cout << "pole right touched!" << std::endl;
-//        xVel = -xVel;
-//        return true;
-//    }
-    if(394<=GetXpos()+width && 396>=GetXpos()+width)
+//     if the ball touches the top of the pole
+    if(ypos+height>=290 && xpos+height>=395 && xpos<=410)
     {
-        if(290<=GetYpos()+height)
+        std::cout << "pole top touched!" << std::endl;
+        setYpos(getYpos()-5);
+        yVel = -yVel;
+//        SDL_Delay(1000);
+        std::cout << "getXpos()+width" << getXpos()+width << " getYpos()+height" << getYpos()+height << std::endl;
+        return true;
+    }
+    else if(395<=getXpos()+width && side == 'L')
+    {
+        if(290<=getYpos()+height)
         {
             std::cout << "pole left touched!" << std::endl;
-            std::cout << "GetXpos()+width" << GetXpos()+width << " GetYpos()" << GetYpos() << std::endl;
+            std::cout << "getXpos()+width" << getXpos()+width << " getYpos()" << getYpos() << std::endl;
             xVel = -xVel;
-            SetXpos(GetXpos()-3);
+            setXpos(getXpos()-3);
             return true;
         }
     }
     // if the ball touches the right side of the pole
-    if(409<=GetXpos() && 411>=GetXpos())
+    else if(410>=getXpos() && side == 'R')
     {
-        if(290<=GetYpos()+height)
+        if(290<=getYpos()+height)
         {
             std::cout << "pole right touched!" << std::endl;
-            std::cout << "GetXpos()+width" << GetXpos()+width << " GetYpos()" << GetYpos() << std::endl;
+            std::cout << "getXpos()+width" << getXpos()+width << " getYpos()" << getYpos() << std::endl;
             xVel = -xVel;
-            SetXpos(GetXpos()+3);
+            setXpos(getXpos()+3);
             return true;
         }
     }
-
-    // if the ball touches the top of the pole
-//    if((395<GetXpos()+width) && (410>GetXpos()) && ( (289.8<(GetYpos()+height)) && (290.2<(GetYpos()+height)) ))
-//    {
-//        std::cout << "pole top touched!" << std::endl;
-//        yVel = -yVel;
-//        SDL_Delay(1000);
-//        std::cout << "GetXpos()+width" << GetXpos()+width << " GetYpos()+height" << GetYpos()+height << std::endl;
-//        return true;
-//    }
-
     
-//    if(GetXpos() + width < 398 && GetYpos() + height < 291)
-//    {
-//        xVel = -xVel;
-//        yVel = -yVel;
-//    }
-//    if(GetXpos() < 408 && GetYpos() + height > 290)
-//    {
-//        xVel = -xVel;
-//        yVel = -yVel;
-//    }
     
     return false;
 };
 
-// check if the ball touches the ground, and then update the score, reset all.
-bool Ball::CheckGround(Player* p1, Player* p2, char &winPlayer)
+// check if the ball touches the ground, and then update the score, reget all.
+bool Ball::checkGround(Player* p1, Player* p2, char &winPlayer)
 {
     //if the ball touches the ground..
     if(xpos < GAME_WIDTH/2 && ypos + height > GAME_HEIGHT)
@@ -229,7 +217,7 @@ bool Ball::CheckGround(Player* p1, Player* p2, char &winPlayer)
         Mix_PlayChannel(-1, groundSound, 0);
         
         //
-        p2->SetScore(p2->GetScore()+1);
+        p2->setScore(p2->getScore()+1);
         winPlayer = 'R';
         return true;
     }else if(xpos > GAME_WIDTH/2 && ypos + height > GAME_HEIGHT)
@@ -237,17 +225,15 @@ bool Ball::CheckGround(Player* p1, Player* p2, char &winPlayer)
         Mix_PlayChannel(-1, groundSound, 0);
         
         //
-        p1->SetScore(p1->GetScore()+1);
+        p1->setScore(p1->getScore()+1);
         winPlayer = 'L';
         return true;
     }
     return false;
 };
 
-void Ball::Update()
+void Ball::update()
 {
-    flame->Update();
-    std::cout << "isTrailing: " << isTrailing << std::endl;
     // basic movement inside the window
     xpos += xVel;
     ypos += yVel;
@@ -279,6 +265,12 @@ void Ball::Update()
         yVel = -yVel;
     }
     
+    // update ball's side to check bar collision
+    if(xpos+width < 400)
+        side = 'L';
+    if(xpos > 400)
+        side = 'R';
+    
     // draw the ball
     destRect.x = xpos;
     destRect.y = ypos;
@@ -289,7 +281,7 @@ void Ball::Update()
     trailingDestRect2.y = ypos-yVel*TRAILING_PREV_PREV;
 };
 
-void Ball::Reset(const char _flag)
+void Ball::reset(const char _flag)
 {
     if(_flag == 'L')
     {
@@ -305,11 +297,14 @@ void Ball::Reset(const char _flag)
     isTrailing = false;
 };
 
-void Ball::Render(double angle)
+void Ball::render(float angle)
 {
     if(isTrailing)
     {
-        flame->Render();
+        checkFlameTime();
+        if(flameOn)
+            flame->render();
+        
         SDL_RenderCopyEx(Game::renderer, trailingTexture1, &srcRect, &trailingDestRect1, angle, NULL, SDL_FLIP_NONE);
         SDL_RenderCopyEx(Game::renderer, trailingTexture2, &srcRect, &trailingDestRect2, angle, NULL, SDL_FLIP_NONE);
     }
@@ -317,12 +312,12 @@ void Ball::Render(double angle)
     SDL_RenderCopyEx(Game::renderer, objTexture, &srcRect, &destRect, angle, NULL, SDL_FLIP_NONE);
 }
 
-float Ball::GetRadius()
+float Ball::getRadius()
 {
     return radius;
 };
 
-double Ball::GetAngle()
+float Ball::getAngle()
 {
     return angle;
 };
@@ -333,3 +328,35 @@ void Ball::setTrailing()
     
     isTrailing = true;
 };
+
+void Ball::setyVel(float _yVel)
+{
+    yVel = _yVel;
+}
+
+void Ball::checkFlameTime()
+{
+    currentTime = SDL_GetTicks();
+    if(currentTime - flameStartTime > 100) // displaying flame for 0.1sec
+        flameOn = false;
+}
+
+void Ball::setFlamePos(int ballX, int ballY, int p1X, int p1Y, int p2X, int p2Y)
+{
+    if(ballX > p1X)
+    {
+        flame->setXpos(p1X+(ballX-p1X)/2);
+    }
+    if(ballX < p1X)
+    {
+        flame->setXpos(p1X-(p1X-ballX)/2);
+    }
+    if(ballY > p1Y)
+    {
+        flame->setYpos(p1Y+(ballY-p1Y)/2);
+    }
+    if(ballY < p1Y)
+    {
+        flame->setYpos(p1Y-(p1Y-ballY)/2);
+    }
+}

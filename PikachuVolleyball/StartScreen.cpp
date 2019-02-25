@@ -7,8 +7,9 @@ const int MODE_HEIGHT = 50;
 
 GameObject *singlePlayMode;
 GameObject *multiPlayMode;
+GameObject *optionMode;
 GameObject *title;
-GameObject *explaination;
+GameObject *explanation;
 GameObject *copyright;
 
 StartScreen::StartScreen(SDL_Renderer *renderer): Screen(renderer)
@@ -17,8 +18,9 @@ StartScreen::StartScreen(SDL_Renderer *renderer): Screen(renderer)
 
     singlePlayMode = new GameObject("SINGLE PLAY", MODE_WIDTH, MODE_HEIGHT, 300, 320);
     multiPlayMode = new GameObject("MULTI PLAY", MODE_WIDTH, MODE_HEIGHT, 300, 380);
+    optionMode = new GameObject("OPTIONS", MODE_WIDTH, MODE_HEIGHT, 300, 440);
     title = new GameObject("Pikachu Volleyball", 400, MODE_HEIGHT, 200, 50);
-    explaination = new GameObject("Press Enter on any mode..", 400, MODE_HEIGHT, 200, 200);
+    explanation = new GameObject("Press Enter on any mode..", 400, MODE_HEIGHT, 200, 200);
     copyright = new GameObject("(C) Jinko, All rights reserved", 400, 50, 200, 500);
 }
 
@@ -28,35 +30,49 @@ StartScreen::~StartScreen()
 
     delete singlePlayMode;
     delete multiPlayMode;
+    delete optionMode;
     delete title;
-    delete explaination;
+    delete explanation;
     delete copyright;
-    delete arrow;
-    delete screen;
 }
 
-void StartScreen::handleEvents(const Uint8 *keystate, bool *isSelecting, bool *isSingle, bool *isMulti)
+void StartScreen::handleEvents(const Uint8 *keystate, bool &isSelecting, bool &isSingle, bool &isMulti, bool &isOption)
 {
     SDL_Event event;
-    SDL_PollEvent(&event);
+    SDL_WaitEvent(&event);
     
     switch (event.type) {
         case SDL_KEYDOWN:
-            if(keystate[SDL_SCANCODE_DOWN] && arrow->GetYpos() == 330)
+            if(keystate[SDL_SCANCODE_DOWN] && arrow->getYpos() == 390)
             {
-                arrow->SetYpos(arrow->GetYpos()+60);
+                arrow->setYpos(arrow->getYpos()+60);
             }
-            if(keystate[SDL_SCANCODE_UP] && arrow->GetYpos() == 390)
+            if(keystate[SDL_SCANCODE_DOWN] && arrow->getYpos() == 330)
             {
-                arrow->SetYpos(arrow->GetYpos()-60);
+                arrow->setYpos(arrow->getYpos()+60);
+            }
+            if(keystate[SDL_SCANCODE_UP] && arrow->getYpos() == 390)
+            {
+                arrow->setYpos(arrow->getYpos()-60);
+            }
+            if(keystate[SDL_SCANCODE_UP] && arrow->getYpos() == 450)
+            {
+                arrow->setYpos(arrow->getYpos()-60);
             }
             if(keystate[SDL_SCANCODE_RETURN])
             {
-                if(arrow->GetYpos() == 330)
-                    *isSingle = true;
-                if(arrow->GetYpos() == 390)
-                    *isMulti = true;
-                *isSelecting = false;
+                if(arrow->getYpos() == 330)
+                {
+                    isSingle = true;
+                    isSelecting = false;
+                }
+                if(arrow->getYpos() == 390)
+                {
+                    isMulti = true;
+                    isSelecting = false;
+                }
+                if(arrow->getYpos() == 450)
+                    isOption = true;
             }
             break;
             
@@ -65,29 +81,31 @@ void StartScreen::handleEvents(const Uint8 *keystate, bool *isSelecting, bool *i
     }
 }
 
-void StartScreen::Update()
+void StartScreen::update()
 {
-    screen->Update();
-    singlePlayMode->Update();
-    multiPlayMode->Update();
-    title->Update();
-    explaination->Update();
-    copyright->Update();
-    arrow->Update();
+    screen->update();
+    singlePlayMode->update();
+    multiPlayMode->update();
+    optionMode->update();
+    title->update();
+    explanation->update();
+    copyright->update();
+    arrow->update();
 }
 
-void StartScreen::Render()
+void StartScreen::render()
 {
     SDL_RenderClear(rend);
     
     // this is where we put things to render
-    screen->Render();
-    singlePlayMode->Render();
-    multiPlayMode->Render();
-    title->Render();
-    explaination->Render();
-    copyright->Render();
-    arrow->Render();
+    screen->render();
+    singlePlayMode->render();
+    multiPlayMode->render();
+    optionMode->render();
+    title->render();
+    explanation->render();
+    copyright->render();
+    arrow->render();
     
     SDL_RenderPresent(rend);
 }

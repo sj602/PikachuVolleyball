@@ -7,7 +7,7 @@ class Ball: public GameObject
 private:
     float xVel;
     float yVel;
-    double angle;
+    float angle;
     
     bool isTrailing = false;
     SDL_Texture* trailingTexture1;
@@ -15,22 +15,30 @@ private:
     SDL_Rect trailingDestRect1;
     SDL_Rect trailingDestRect2;
     
+    bool flameOn = false;
+    Uint32 flameStartTime;
+    Uint32 currentTime;
     GameObject* flame = nullptr;
-
+    
+    char side;
 public:
     Ball(const char* textureSheet, int w, int h, float x, float y);
     ~Ball();
     
-    void Update();
-    bool CheckCollision(Player* p1, Player* p2, const Uint8 *keystate);
-    bool CheckGround(Player* p1, Player* p2, char &winPlayer);
-    void Reset(const char _flag);
-    void Render(double angle);
-    void setTrailing();
+    void update() override;
+    bool checkCollision(Player* p1, Player* p2, const Uint8 *keystate);
+    bool checkGround(Player* p1, Player* p2, char &winPlayer);
+    void reset(const char _flag);
+    void render(float angle);
+    void checkFlameTime();
+    void setFlamePos(int ballX, int ballY, int p1X, int p1Y, int p2X, int p2Y);
 
     // getters
-    float GetRadius();
-    double GetAngle();
+    float getRadius();
+    float getAngle();
+    // setters
+    void setTrailing();
+    void setyVel(float _yVel);
     
     // move to private later on..
     Mix_Chunk *groundSound;

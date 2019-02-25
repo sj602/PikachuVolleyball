@@ -1,10 +1,12 @@
 #include "Game.h"
 #include "StartScreen.h"
 #include "MultiplaySettingScreen.h"
+#include "OptionScreen.h"
 #include "TextureManager.h"
 #include "ScreenManager.h"
 #include "GameObject.h"
 #include "Player.h"
+#include "AI.h"
 #include "Ball.h"
 
 using namespace std;
@@ -27,7 +29,7 @@ GameObject *map;
 GameObject *pole;
 GameObject *score1;
 GameObject *score2;
-//GameObject *flame;
+GameObject *wonSign;
 
 SDL_Renderer* Game::renderer = nullptr;
 const Uint8 *keystate = SDL_GetKeyboardState(NULL);
@@ -36,6 +38,7 @@ const Uint8 *keystate = SDL_GetKeyboardState(NULL);
 //Screen *multiSettingScreen = nullptr;
 StartScreen *startScreen = nullptr;
 MultiplaySettingScreen *multiSettingScreen = nullptr;
+OptionScreen *optionScreen = nullptr;
 
 Game::Game(){};
 Game::~Game(){};
@@ -73,15 +76,15 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
         cout << "Could not create window: " << IMG_GetError() << endl;
     
     startScreen = new StartScreen(renderer);
-    multiSettingScreen = new MultiplaySettingScreen();
+    multiSettingScreen = new MultiplaySettingScreen(renderer);
+    optionScreen = new OptionScreen(renderer, targetScore);
     player1 = new Player("images/right_look_pikachu.png", PLAYER_WIDTH, PLAYER_HEIGHT, 0, GAME_HEIGHT-PLAYER_HEIGHT, 'L');
-    player2 = new Player("images/left_look_pikachu.png", PLAYER_WIDTH, PLAYER_HEIGHT, GAME_WIDTH-PLAYER_WIDTH, GAME_HEIGHT-PLAYER_HEIGHT, 'R');
+    player2 = new Player("images/left_look_pikachu.png", PLAYER_WIDTH, PLAYER_HEIGHT, GAME_WIDTH-PLAYER_WIDTH, GAME_HEIGHT-PLAYER_HEIGHT, 'A');
     map = new GameObject("images/background.png", GAME_WIDTH, GAME_HEIGHT, 0, 0, "img");
     pole = new GameObject("images/pole.png", 9, 300, 400, 380);
     ball = new Ball("images/ball.png", BALL_WIDTH, BALL_HEIGHT, 60, 60);
     score1 = new GameObject(0, SCORE_WIDTH, SCORE_HEIGHT, 0, 0);
     score2 = new GameObject(0, SCORE_WIDTH, SCORE_HEIGHT, 750, 0);
-//    flame = new GameObject("images/flame.png", 30, 30, 0, 0, "img");
     
     isRunning = true;
 };
@@ -98,9 +101,9 @@ bool Game::settingMultiplay()
 
 void Game::displayStartScreen()
 {
-    startScreen->handleEvents(keystate, &isSelecting, &isSingle, &isMulti);
-    startScreen->Update();
-    startScreen->Render();
+    startScreen->handleEvents(keystate, isSelecting, isSingle, isMulti, isOption);
+    startScreen->update();
+    startScreen->render();
     
     if(isSelecting == false)
         if(Mix_PlayMusic(bgm, -1) < 0)
@@ -109,9 +112,16 @@ void Game::displayStartScreen()
 
 void Game::displayMultiplaySettingScreen()
 {
-    multiSettingScreen->handleEvents(keystate, &isSelecting, &isSingle, &isMulti);
-    multiSettingScreen->Update();
-    multiSettingScreen->Render();
+    multiSettingScreen->handleEvents(keystate, isSelecting, isSingle, isMulti);
+    multiSettingScreen->update();
+    multiSettingScreen->render();
+};
+
+void Game::displayOptionScreen()
+{
+    optionScreen->handleEvents(keystate, isOption, targetScore);
+    optionScreen->update();
+    optionScreen->render();
 };
 
 void Game::handleEvents()
@@ -125,12 +135,12 @@ void Game::handleEvents()
             break;
             
         case SDL_KEYDOWN:
-            player1->MovePressed(keystate);
+            player1->movePressed(keystate);
 //            player2->MovePressed(keystate);
             break;
             
         case SDL_KEYUP:
-            player1->MoveReleased(keystate);
+            player1->moveReleased(keystate);
 //            player2->MoveReleased(keystate);
             break;
             
@@ -143,8 +153,8 @@ void Game::handleEvents()
             
         case SDL_MOUSEBUTTONDOWN:
             SDL_GetMouseState(&x, &y);
-            ball->SetXpos(x);
-            ball->SetYpos(y);
+            ball->setXpos(x);
+            ball->setYpos(y);
             break;
             
         default:
@@ -154,34 +164,37 @@ void Game::handleEvents()
 
 void Game::update()
 {
-    map->Update();
-    player1->Update();
-    player2->Update();
+    player1->update();
+    player2->update();
     
-    ball->Update();
-    ball->CheckCollision(player1, player2, keystate);
-    if(ball->CheckGround(player1, player2, winPlayer))
+    ball->update();
+    ball->checkCollision(player1, player2, keystate);
+    if(ball->checkGround(player1, player2, winPlayer))
     {
         // trying to fade in and out when ball touches ground...
-        SDL_Texture *fadingScreen = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 800, 600);
-        SDL_SetTextureAlphaMod(fadingScreen, 0);
-        SDL_RenderCopy(renderer, fadingScreen, NULL, NULL);
-        SDL_RenderPresent(renderer);
+//        SDL_Texture *fadingScreen = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 800, 600);
+//        SDL_SetTextureAlphaMod(fadingScreen, 0);
+//        SDL_RenderCopy(renderer, fadingScreen, NULL, NULL);
+//        SDL_RenderPresent(renderer);
 
         //        ScreenManager::FadeInAndOut(renderer);
         
         if(winPlayer == 'L')
-            ball->Reset('L');
+            ball->reset('L');
         if(winPlayer == 'R')
-            ball->Reset('R');
-        player1->Reset('L');
-        player2->Reset('R');
+            ball->reset('R');
+        player1->reset('L');
+        if(player2->getFlag() == 'A')
+            player2->reset('A');
+        if(player2->getFlag() == 'R')
+            player2->reset('R');
         
+        score1->update(player1->getScore());
+        score2->update(player2->getScore());
     }
     
-    score1->Update(player1->GetScore());
-    score2->Update(player2->GetScore());
-//    flame->Update();
+    if(playerWon)
+        wonSign->update();
 };
 
 void Game::render()
@@ -189,23 +202,21 @@ void Game::render()
     SDL_RenderClear(renderer);
 
     // this is where we put things to render
-    map->Render();
-    player1->Render();
-    player2->Render();
-    ball->Render(ball->GetAngle());
-    score1->Render();
-    score2->Render();
-//    flame->Render();
+    map->render();
+    player1->render();
+    player2->render();
+    ball->render(ball->getAngle());
+    score1->render();
+    score2->render();
     
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderDrawLine(renderer, ball->GetXpos()+50, ball->GetYpos()+50, player1->GetXpos()+50, player1->GetYpos()+50);
-    
+    if(playerWon)
+        wonSign->render();
+
     SDL_RenderPresent(renderer);
 };
 
 void Game::reset()
 {
-    SDL_Delay(1000);
     /*
      1. 공이 땅바닥에 닿는다
      2. 게임이 느려진다
@@ -216,16 +227,45 @@ void Game::reset()
      */
 };
 
+void Game::checkGameSet()
+{
+    if(player1->getScore() == targetScore)
+    {
+        playerWon = true;
+        if(!wonSign)
+        {
+            const char *name = (player1->getName() + " won!").c_str();
+            wonSign = new GameObject(name, 500, 100, 140, 60);
+        }
+        ball->setyVel(0);
+    }
+    
+    if(player2->getScore() == targetScore)
+    {
+        playerWon = true;
+        if(!wonSign)
+        {
+            const char *name = (player2->getName() + " won!").c_str();
+            wonSign = new GameObject(name, 500, 100, 140, 60);
+        }
+        ball->setyVel(0);
+    }
+};
+
 void Game::clean()
 {
     Mix_HaltMusic();
     Mix_FreeMusic(bgm);
 //    Mix_FreeChunk(Player::jumpSound);
-//    Mix_FreeChunk(Player::spikeSound);
+//    Mix_FreeChunk(Ball::groundSound);
+//    Mix_FreeChunk(Ball::spikeSound);
 //    Mix_FreeChunk(Player::dashSound);
 
+//    SDL_DestroyTexture(backgroundImage);
+    
     delete startScreen;
     delete multiSettingScreen;
+    delete optionScreen;
     delete player1;
     delete player2;
     delete map;
@@ -233,14 +273,34 @@ void Game::clean()
     delete pole;
     delete score1;
     delete score2;
-//    delete flame;
 
+
+    if(multiSettingScreen->getServer())
+        SDLNet_TCP_Close(multiSettingScreen->getServer());
+    if(multiSettingScreen->getClient())
+        SDLNet_TCP_Close(multiSettingScreen->getClient());
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
     SDL_Quit();
 
     cout << "Game is cleaned" << endl;
 };
+
+//void Game::killResource()
+//{
+//    if(isSelecting)
+//        delete startScreen;
+//
+//    delete multiSettingScreen;
+//    delete optionScreen;
+//    delete player1;
+//    delete player2;
+//    delete map;
+//    delete ball;
+//    delete pole;
+//    delete score1;
+//    delete score2;
+//}
 
 bool Game::running()
 {
@@ -255,5 +315,10 @@ bool Game::singleMode()
 bool Game::multiMode()
 {
     return isMulti;
+};
+
+bool Game::optionMode()
+{
+    return isOption;
 };
 

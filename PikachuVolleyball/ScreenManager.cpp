@@ -10,7 +10,7 @@ ScreenManager::~ScreenManager()
     
 };
 
-void ScreenManager::FadeInAndOut(SDL_Renderer* renderer)
+void ScreenManager::fadeInAndOut(SDL_Renderer* renderer)
 {
     SDL_Rect fadingScreen;
     fadingScreen.x = 0;

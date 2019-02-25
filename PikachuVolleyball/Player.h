@@ -9,21 +9,28 @@ private:
         
     int score;
     char flag;
-    bool isDashing = false;
     
+    std::string name;
+    
+    bool isDashing = false;
 public:
     Player(const char* textureSheet, int w, int h, float x, float y, const char _flag);
     ~Player();
     
-    void Update();
-    int GetScore();
-    void SetScore(int _score);
-    void Reset(const char _flag);
-    void MovePressed(const Uint8 *keystate);
-    void MoveReleased(const Uint8 *keystate);
+    void update() override;
+    void reset(const char _flag);
+    void movePressed(const Uint8 *keystate);
+    void moveReleased(const Uint8 *keystate);
+    void actAI();
 
     // getters
-    float GetRadius();
+    int getScore();
+    float getRadius();
+    char getFlag();
+    std::string getName();
+    
+    // setters
+    void setScore(int _score);
     
     // move to private later on...
     Mix_Chunk *jumpSound;

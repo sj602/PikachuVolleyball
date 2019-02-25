@@ -8,5 +8,5 @@ public:
     ScreenManager();
     ~ScreenManager();
     
-    static void FadeInAndOut(SDL_Renderer* renderer);
+    static void fadeInAndOut(SDL_Renderer* renderer);
 };
