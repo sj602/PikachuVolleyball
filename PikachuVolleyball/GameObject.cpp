@@ -15,7 +15,7 @@ GameObject::~GameObject()
 }
 
 // for general
-GameObject::GameObject(const std::string& textureSheet, int w, int h, int x, int y)
+GameObject::GameObject(const std::string textureSheet, int w, int h, int x, int y)
 {
     const char *texture = textureSheet.c_str();
     objTexture = TextureManager::loadTexture(texture);
@@ -85,7 +85,7 @@ GameObject::GameObject(const char *text, int w, int h, int x, int y)
 };
 
 // for texts in custom color
-GameObject::GameObject(const std::string& text, int w, int h, int x, int y, SDL_Color& textColor)
+GameObject::GameObject(const std::string text, int w, int h, int x, int y, SDL_Color& textColor)
 {
     objTexture = TextureManager::loadFont(text, textColor);
     

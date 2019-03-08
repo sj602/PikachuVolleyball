@@ -19,7 +19,6 @@
 		EFABDAE321FD3420005B08EA /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFABDAE121FD3420005B08EA /* Player.cpp */; };
 		EFABDAE721FD42F9005B08EA /* libSDL2_ttf-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EFABDAD921FCAB58005B08EA /* libSDL2_ttf-2.0.0.dylib */; };
 		EFABDAEE21FD873C005B08EA /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFABDAEC21FD873C005B08EA /* Ball.cpp */; };
-		EFB3CBB822015A5700AAD8DB /* ScreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFB3CBB622015A5700AAD8DB /* ScreenManager.cpp */; };
 		EFB68FAE2217D5B700A91FC8 /* Screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFB68FAC2217D5B700A91FC8 /* Screen.cpp */; };
 		EFB68FB1221A53EA00A91FC8 /* AI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFB68FAF221A53EA00A91FC8 /* AI.cpp */; };
 		EFC141282212C08A002A750C /* MultiplaySettingScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFC141262212C08A002A750C /* MultiplaySettingScreen.cpp */; };
@@ -39,7 +38,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		EF1168DB220BFC6A0053E9BB /* libSDL2_gfx-1.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libSDL2_gfx-1.0.0.dylib"; path = "../../../../../usr/local/Cellar/sdl2_gfx/1.0.4/lib/libSDL2_gfx-1.0.0.dylib"; sourceTree = "<group>"; };
 		EF63CB0622227B86003AA8B8 /* OptionScreen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OptionScreen.cpp; sourceTree = "<group>"; };
 		EF63CB0722227B86003AA8B8 /* OptionScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OptionScreen.h; sourceTree = "<group>"; };
 		EFABDAB821F6B108005B08EA /* PikachuVolleyball */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PikachuVolleyball; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -62,8 +60,6 @@
 		EFABDAE221FD3420005B08EA /* Player.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Player.h; sourceTree = "<group>"; };
 		EFABDAEC21FD873C005B08EA /* Ball.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Ball.cpp; sourceTree = "<group>"; };
 		EFABDAED21FD873C005B08EA /* Ball.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Ball.h; sourceTree = "<group>"; };
-		EFB3CBB622015A5700AAD8DB /* ScreenManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScreenManager.cpp; sourceTree = "<group>"; };
-		EFB3CBB722015A5700AAD8DB /* ScreenManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScreenManager.h; sourceTree = "<group>"; };
 		EFB68FAC2217D5B700A91FC8 /* Screen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Screen.cpp; sourceTree = "<group>"; };
 		EFB68FAD2217D5B700A91FC8 /* Screen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Screen.h; sourceTree = "<group>"; };
 		EFB68FAF221A53EA00A91FC8 /* AI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AI.cpp; sourceTree = "<group>"; };
@@ -134,8 +130,6 @@
 				EF63CB0622227B86003AA8B8 /* OptionScreen.cpp */,
 				EFABDACE21F9F582005B08EA /* TextureManager.h */,
 				EFABDACF21F9F606005B08EA /* TextureManager.cpp */,
-				EFB3CBB722015A5700AAD8DB /* ScreenManager.h */,
-				EFB3CBB622015A5700AAD8DB /* ScreenManager.cpp */,
 			);
 			path = PikachuVolleyball;
 			sourceTree = "<group>";
@@ -143,7 +137,6 @@
 		EFABDAC221F6B171005B08EA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				EF1168DB220BFC6A0053E9BB /* libSDL2_gfx-1.0.0.dylib */,
 				EFABDAD921FCAB58005B08EA /* libSDL2_ttf-2.0.0.dylib */,
 				EFABDAC921F6B847005B08EA /* libSDL2_net-2.0.0.dylib */,
 				EFABDAC721F6B83A005B08EA /* libSDL2_mixer-2.0.0.dylib */,
@@ -226,7 +219,6 @@
 				EF63CB0822227B86003AA8B8 /* OptionScreen.cpp in Sources */,
 				EFB68FAE2217D5B700A91FC8 /* Screen.cpp in Sources */,
 				EFABDAEE21FD873C005B08EA /* Ball.cpp in Sources */,
-				EFB3CBB822015A5700AAD8DB /* ScreenManager.cpp in Sources */,
 				EFC141282212C08A002A750C /* MultiplaySettingScreen.cpp in Sources */,
 				EFC1412B2212F6F2002A750C /* StartScreen.cpp in Sources */,
 			);

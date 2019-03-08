@@ -27,12 +27,14 @@ Player::Player(const char *textureSheet, int w, int h, float x, float y, const c
     flag = _flag; // for Left or Right or AI player
     if(flag == 'A')
     {
-        xVel = LEFT_MOVE_XVEL;
+        setxVel(LEFT_MOVE_XVEL);
         name = "Computer";
     }
     if(flag == 'L')
-        name = "Player";
-    
+        name = "Player1";
+    if(flag == 'R')
+        name = "Player2";
+
     // for initial position
     srcRect.w = 400;
     srcRect.h = 400;
@@ -52,7 +54,6 @@ Player::~Player()
 
 void Player::movePressed(const Uint8 *keystate)
 {
-    
     if(keystate[SDL_SCANCODE_UP] && ypos == GAME_HEIGHT-height) // jump and from ground only
     {
         Mix_PlayChannel(-1, jumpSound, 0);
@@ -70,7 +71,7 @@ void Player::movePressed(const Uint8 *keystate)
             xVel = RIGHT_MOVE_XVEL;
         }
 
-    if(keystate[SDL_SCANCODE_LEFT] && keystate[SDL_SCANCODE_SPACE]) // left dash
+    if((keystate[SDL_SCANCODE_LEFT] && keystate[SDL_SCANCODE_SPACE])) // left dash
         if((flag == 'L' && xpos > 0 && ypos + height == GAME_HEIGHT) || (flag == 'R' && xpos > GAME_WIDTH/2 && ypos + height == GAME_HEIGHT))
         {
             SDL_DestroyTexture(objTexture);
@@ -81,7 +82,7 @@ void Player::movePressed(const Uint8 *keystate)
 
             isDashing = true;
         }
-    if(keystate[SDL_SCANCODE_RIGHT] && keystate[SDL_SCANCODE_SPACE]) // right dash
+    if((keystate[SDL_SCANCODE_RIGHT] && keystate[SDL_SCANCODE_SPACE])) // right dash
         if((flag == 'L' && xpos > 0 && ypos + height == GAME_HEIGHT) || (flag == 'R' && xpos > GAME_WIDTH/2 && ypos + height == GAME_HEIGHT))
         {
             SDL_DestroyTexture(objTexture);
@@ -92,19 +93,19 @@ void Player::movePressed(const Uint8 *keystate)
             isDashing = true;
         }
 
-    if(keystate[SDL_SCANCODE_LEFT] && keystate[SDL_SCANCODE_LSHIFT]) // left spike
+    if((keystate[SDL_SCANCODE_LEFT] && keystate[SDL_SCANCODE_LSHIFT]) || didSpike) // left spike
         if((flag == 'L' && xpos > 0) || (flag == 'R' && xpos > 400))
         {
             GameObject* flame = new GameObject("images/flame.png", 100, 100, getXpos()-20, getYpos()-20);
             delete flame;
         }
-    if(keystate[SDL_SCANCODE_RIGHT] && keystate[SDL_SCANCODE_LSHIFT]) // right spike
+    if((keystate[SDL_SCANCODE_RIGHT] && keystate[SDL_SCANCODE_LSHIFT]) || didSpike) // right spike
         if((flag == 'L' && xpos > 0) || (flag == 'R' && xpos > 400))
         {
             GameObject* flame = new GameObject("images/flame.png", 100, 100, getXpos()-20, getYpos()-20);
             delete flame;
         }
-
+ 
 };
 
 void Player::moveReleased(const Uint8 *keystate)
@@ -115,8 +116,7 @@ void Player::moveReleased(const Uint8 *keystate)
     }
 };
 
-
-void Player::update()
+void Player::update(bool& isMulti, bool& isHost, bool& isGuest, TCPsocket& client)
 {
     xpos += xVel;
     ypos += yVel;
@@ -131,16 +131,16 @@ void Player::update()
         xpos = (GAME_WIDTH/2)-width;
         xVel = 0;
     }
-//    if((flag == 'R' && xpos < GAME_WIDTH/2))
-//    {
-//        xpos = GAME_WIDTH/2;
-//        xVel = 0;
-//    }
-//    if((flag == 'R' && xpos+width > GAME_WIDTH))
-//    {
-//        xpos = GAME_WIDTH-width;
-//        xVel = 0;
-//    }
+    if((flag == 'R' && xpos < GAME_WIDTH/2))
+    {
+        xpos = GAME_WIDTH/2;
+        xVel = 0;
+    }
+    if((flag == 'R' && xpos+width > GAME_WIDTH))
+    {
+        xpos = GAME_WIDTH-width;
+        xVel = 0;
+    }
     
     // Prevent player falling over the ground
     if(ypos+height > GAME_HEIGHT)
@@ -181,8 +181,14 @@ void Player::update()
     destRect.x = xpos;
     destRect.y = ypos;
     
+    // for AI's random spike 
+    if(didSpike)
+        didSpike = false;
+    
     if(flag == 'A')
         actAI();
+    if(isMulti)
+        actMulti(isHost, isGuest, client);
 };
 
 int Player::getScore()
@@ -190,10 +196,20 @@ int Player::getScore()
     return score;
 };
 
-void Player::setScore(int _score)
+void Player::setScore(const int _score)
 {
     score = _score;
 };
+
+void Player::setFlag(const char _flag)
+{
+    flag = _flag;
+}
+
+void Player::setxVel(const float _xVel)
+{
+    xVel = _xVel;
+}
 
 void Player::reset(const char _flag)
 {
@@ -231,6 +247,21 @@ std::string Player::getName()
     return name;
 };
 
+int Player::getSpikeState()
+{
+    // this function returns 0,1,2,3 randomly
+    // 0 for nothing
+    // 1 for straight spike
+    // 2 for down spike
+    // 3 for drop spike
+    if(didSpike)
+    {
+        int random = rand() % 3 + 1;
+        return random;
+    }
+    return 0;
+}
+
 void Player::actAI()
 {
     if(xpos < GAME_WIDTH/2)
@@ -245,8 +276,59 @@ void Player::actAI()
     }
     
     // jump randomly(at 1/50 chances)
-    int random = rand() % 50+ 1;
-    if(random == 1 && ypos == GAME_HEIGHT-height)
+    int randomJump = rand() % 50 + 1;
+    if(randomJump == 1 && ypos == GAME_HEIGHT-height)
         yVel = JUMP_YVEL;
+    
+    // spike randomly(at 1/10 chances)
+    int randomSpike = rand() % 10 + 1;
+    if(randomSpike == 1 && !didSpike)
+        didSpike = true;
+};
+
+void Player::actMulti(bool& isHost, bool& isGuest, TCPsocket& client)
+{
+    data->_xpos = xpos;
+    data->_ypos = ypos;
+    data->_xVel = xVel;
+    data->_yVel = yVel;
+    data->_isDashing = isDashing;
+    
+    if(isHost)
+    {
+        if(flag == 'L')
+        {
+            // me
+            SDLNet_TCP_Send(client, data, 24);
+        }
+        if(flag == 'R')
+        {
+            // opponent
+            SDLNet_TCP_Recv(client, data, 24);
+            xpos = data->_xpos;
+            ypos = data->_ypos;
+            xVel = data->_xVel;
+            yVel = data->_yVel;
+            isDashing = data->_isDashing;
+        }
+    }
+    if(isGuest)
+    {
+        if(flag == 'L')
+        {
+            // opponent
+            SDLNet_TCP_Recv(client, data, 24);
+            xpos = data->_xpos;
+            ypos = data->_ypos;
+            xVel = data->_xVel;
+            yVel = data->_yVel;
+            isDashing = data->_isDashing;
+        }
+        if(flag == 'R')
+        {
+            // me
+            SDLNet_TCP_Send(client, data, 24);
+        }
+    }
 };
 

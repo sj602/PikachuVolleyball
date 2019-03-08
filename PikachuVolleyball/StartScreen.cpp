@@ -12,16 +12,16 @@ GameObject *title;
 GameObject *explanation;
 GameObject *copyright;
 
-StartScreen::StartScreen(SDL_Renderer *renderer): Screen(renderer)
+StartScreen::StartScreen(SDL_Renderer* _renderer): Screen(_renderer)
 {
     std::cout << "StartScreen constructor()!" << std::endl;
 
-    singlePlayMode = new GameObject("SINGLE PLAY", MODE_WIDTH, MODE_HEIGHT, 300, 320);
-    multiPlayMode = new GameObject("MULTI PLAY", MODE_WIDTH, MODE_HEIGHT, 300, 380);
-    optionMode = new GameObject("OPTIONS", MODE_WIDTH, MODE_HEIGHT, 300, 440);
-    title = new GameObject("Pikachu Volleyball", 400, MODE_HEIGHT, 200, 50);
-    explanation = new GameObject("Press Enter on any mode..", 400, MODE_HEIGHT, 200, 200);
-    copyright = new GameObject("(C) Jinko, All rights reserved", 400, 50, 200, 500);
+    singlePlayMode = new GameObject("SINGLE PLAY", MODE_WIDTH, MODE_HEIGHT, 300, 320, white);
+    multiPlayMode = new GameObject("MULTI PLAY", MODE_WIDTH, MODE_HEIGHT, 300, 380, white);
+    optionMode = new GameObject("OPTIONS", MODE_WIDTH, MODE_HEIGHT, 300, 440, white);
+    title = new GameObject("Pikachu Volleyball", 400, MODE_HEIGHT, 200, 50, white);
+    explanation = new GameObject("Press Enter on any mode..", 400, MODE_HEIGHT, 200, 200, white);
+    copyright = new GameObject("(C) Jinko, All rights reserved", 400, 50, 200, 500, white);
 }
 
 StartScreen::~StartScreen()
@@ -36,7 +36,7 @@ StartScreen::~StartScreen()
     delete copyright;
 }
 
-void StartScreen::handleEvents(const Uint8 *keystate, bool &isSelecting, bool &isSingle, bool &isMulti, bool &isOption)
+void StartScreen::handleEvents(const Uint8*& keystate, bool &isSelecting, bool &isSingle, bool &isMulti, bool &isOption)
 {
     SDL_Event event;
     SDL_WaitEvent(&event);
@@ -95,7 +95,7 @@ void StartScreen::update()
 
 void StartScreen::render()
 {
-    SDL_RenderClear(rend);
+    SDL_RenderClear(renderer);
     
     // this is where we put things to render
     screen->render();
@@ -107,6 +107,6 @@ void StartScreen::render()
     copyright->render();
     arrow->render();
     
-    SDL_RenderPresent(rend);
+    SDL_RenderPresent(renderer);
 }
 

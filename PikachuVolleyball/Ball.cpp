@@ -37,7 +37,7 @@ Ball::Ball(const char *textureSheet, int w, int h, float x, float y) : GameObjec
     yVel = 2; // for initial falling
     radius = 50;
     angle = 0;
-
+    
     // for initial position
     srcRect.w = 300;
     srcRect.h = 300;
@@ -75,7 +75,6 @@ bool Ball::checkCollision(Player* p1, Player* p2, const Uint8 *keystate)
     //if the ball touches the player..
     if(p1RealDistance <= p1TouchedDistance)
     {
-        std::cout << "p1 touched!" << std::endl;
         if(ballX < p1X)
         {
             xVel = (p1X - ballX) / 9;
@@ -85,7 +84,6 @@ bool Ball::checkCollision(Player* p1, Player* p2, const Uint8 *keystate)
             xVel = (ballX - p1X) / 9;
         }
         yVel = BASIC_BOUNCE_VEL;
-        
         isTrailing = false; // after the trailing ball touches the player, it would stop trailing
         
         return true;
@@ -93,7 +91,6 @@ bool Ball::checkCollision(Player* p1, Player* p2, const Uint8 *keystate)
     
     if(p2RealDistance <= p2TouchedDistance)
     {
-        std::cout << "p2 touched!" << std::endl;
         if(ballX < p2X)
         {
             xVel = (p2X - ballX) / 9;
@@ -111,81 +108,105 @@ bool Ball::checkCollision(Player* p1, Player* p2, const Uint8 *keystate)
     // for spike..
     if(p1RealDistance <= p1TouchedDistance + SPIKE_RADIUS)
     {
-        if(keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_RIGHT])
+        if((keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_RIGHT]) || p1->getSpikeState() == 1)
         {
-            setFlamePos(ballX, ballY, p1X, p1Y, p2X, p2Y);
+            setFlamePos(ballX, ballY, p1X, p1Y, p2X, p2Y, 'L');
             flameOn = true;
             flameStartTime = SDL_GetTicks();
             flame->update();
             
             setTrailing();
 
-            std::cout << "p1RealDistance: " << p1RealDistance << " p1TouchedDistance: " << p1TouchedDistance << std::endl;
-            std::cout << "p1 spiked!" << std::endl;
             xVel = RIGHT_SPIKE_XVEL;
             yVel = SPIKE_YVEL;
             return true;
         }
-        if(keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_DOWN])
+        if((keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_DOWN]) || p1->getSpikeState() == 2)
         {
-            setFlamePos(ballX, ballY, p1X, p1Y, p2X, p2Y);
+            setFlamePos(ballX, ballY, p1X, p1Y, p2X, p2Y, 'L');
             flameOn = true;
             flameStartTime = SDL_GetTicks();
             flame->update();
             
             setTrailing();
 
-            std::cout << "p1RealDistance: " << p1RealDistance << " p1TouchedDistance: " << p1TouchedDistance << std::endl;
-            std::cout << "p1 spiked!" << std::endl;
             xVel = DOWN_SPIKE_XVEL;
             yVel = DOWN_SPIKE_YVEL;
             return true;
         }
-        if(keystate[SDL_SCANCODE_LSHIFT])
+        if(keystate[SDL_SCANCODE_LSHIFT] || p1->getSpikeState() == 3)
         {
-            setFlamePos(ballX, ballY, p1X, p1Y, p2X, p2Y);
+            setFlamePos(ballX, ballY, p1X, p1Y, p2X, p2Y, 'L');
             flameOn = true;
             flameStartTime = SDL_GetTicks();
             flame->update();
             
             setTrailing();
 
-            std::cout << "p1RealDistance: " << p1RealDistance << " p1TouchedDistance: " << p1TouchedDistance << std::endl;
-            std::cout << "p1 spiked!" << std::endl;
             xVel = BASIC_SPIKE_XVEL;
             yVel = BASIC_SPIKE_YVEL;
             return true;
         }
     }
     
-    if(p2RealDistance <= p2TouchedDistance + SPIKE_RADIUS && keystate[SDL_SCANCODE_LSHIFT])
+    if(p2RealDistance <= p2TouchedDistance + SPIKE_RADIUS)
     {
-//        Mix_PlayChannel(-1, spikeSound, 0);
+        if((keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LEFT]) || p2->getSpikeState() == 1)
+        {
+            SDL_Delay(100);
+            setFlamePos(ballX, ballY, p1X, p1Y, p2X, p2Y, 'R');
+            flameOn = true;
+            flameStartTime = SDL_GetTicks();
+            flame->update();
+            
+            setTrailing();
+            
+            xVel = LEFT_SPIKE_XVEL;
+            yVel = SPIKE_YVEL;
+            return true;
+        }
+        if((keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_DOWN]) || p2->getSpikeState() == 2)
+        {
+            setFlamePos(ballX, ballY, p1X, p1Y, p2X, p2Y, 'R');
+            flameOn = true;
+            flameStartTime = SDL_GetTicks();
+            flame->update();
+            
+            setTrailing();
+            
+            xVel = DOWN_SPIKE_XVEL;
+            yVel = DOWN_SPIKE_YVEL;
+            return true;
+        }
+        if(keystate[SDL_SCANCODE_LSHIFT] || p2->getSpikeState() == 3)
+        {
+            setFlamePos(ballX, ballY, p1X, p1Y, p2X, p2Y, 'R');
+            flameOn = true;
+            flameStartTime = SDL_GetTicks();
+            flame->update();
+            
+            setTrailing();
+            
+            xVel = BASIC_SPIKE_XVEL;
+            yVel = BASIC_SPIKE_YVEL;
+            return true;
+        }
 
-        
         return true;
     }
     
-    
-    // pole left x : 395
-    // pole right x : 410
-    // pole top y : 290
-//     if the ball touches the top of the pole
-    if(ypos+height>=290 && xpos+height>=395 && xpos<=410)
+    // if the ball touches the top of the pole
+    if(ypos+height>=290 && xpos+width>=395 && xpos<=410)
     {
-        std::cout << "pole top touched!" << std::endl;
         setYpos(getYpos()-5);
         yVel = -yVel;
-//        SDL_Delay(1000);
-        std::cout << "getXpos()+width" << getXpos()+width << " getYpos()+height" << getYpos()+height << std::endl;
         return true;
     }
+    // if the ball touches the left side of the pole
     else if(395<=getXpos()+width && side == 'L')
     {
         if(290<=getYpos()+height)
         {
-            std::cout << "pole left touched!" << std::endl;
-            std::cout << "getXpos()+width" << getXpos()+width << " getYpos()" << getYpos() << std::endl;
             xVel = -xVel;
             setXpos(getXpos()-3);
             return true;
@@ -196,8 +217,6 @@ bool Ball::checkCollision(Player* p1, Player* p2, const Uint8 *keystate)
     {
         if(290<=getYpos()+height)
         {
-            std::cout << "pole right touched!" << std::endl;
-            std::cout << "getXpos()+width" << getXpos()+width << " getYpos()" << getYpos() << std::endl;
             xVel = -xVel;
             setXpos(getXpos()+3);
             return true;
@@ -232,7 +251,7 @@ bool Ball::checkGround(Player* p1, Player* p2, char &winPlayer)
     return false;
 };
 
-void Ball::update()
+void Ball::update(bool& isMulti, bool& isHost, bool& isGuest, TCPsocket& client)
 {
     // basic movement inside the window
     xpos += xVel;
@@ -279,6 +298,9 @@ void Ball::update()
     trailingDestRect1.y = ypos-yVel*TRAILING_PREV;
     trailingDestRect2.x = xpos-xVel*TRAILING_PREV_PREV;
     trailingDestRect2.y = ypos-yVel*TRAILING_PREV_PREV;
+    
+    if(isMulti)
+        actMulti(isHost, isGuest, client, data);
 };
 
 void Ball::reset(const char _flag)
@@ -322,6 +344,11 @@ float Ball::getAngle()
     return angle;
 };
 
+float Ball::getyVel()
+{
+    return yVel;
+};
+
 void Ball::setTrailing()
 {
     Mix_PlayChannel(-1, spikeSound, 0);
@@ -341,22 +368,66 @@ void Ball::checkFlameTime()
         flameOn = false;
 }
 
-void Ball::setFlamePos(int ballX, int ballY, int p1X, int p1Y, int p2X, int p2Y)
+void Ball::setFlamePos(int ballX, int ballY, int p1X, int p1Y, int p2X, int p2Y, const char flag)
 {
-    if(ballX > p1X)
+    if(flag == 'L')
     {
-        flame->setXpos(p1X+(ballX-p1X)/2);
+        if(ballX > p1X)
+            flame->setXpos(p1X+(ballX-p1X)/2);
+        if(ballX < p1X)
+            flame->setXpos(p1X-(p1X-ballX)/2);
+        if(ballY > p1Y)
+            flame->setYpos(p1Y+(ballY-p1Y)/2);
+        if(ballY < p1Y)
+            flame->setYpos(p1Y-(p1Y-ballY)/2);
     }
-    if(ballX < p1X)
+    else
     {
-        flame->setXpos(p1X-(p1X-ballX)/2);
+        if(ballX > p2X)
+            flame->setXpos(p2X+(ballX-p2X)/2);
+        if(ballX < p2X)
+            flame->setXpos(p2X-(p2X-ballX)/2);
+        if(ballY > p2Y)
+            flame->setYpos(p2Y+(ballY-p2Y)/2);
+        if(ballY < p2Y)
+            flame->setYpos(p2Y-(p2Y-ballY)/2);
     }
-    if(ballY > p1Y)
+}
+
+void Ball::actMulti(bool& isHost, bool& isGuest, TCPsocket& client, ballData* data)
+{
+    data->b_xpos = xpos;
+    data->b_ypos = ypos;
+    data->b_xVel = xVel;
+    data->b_yVel = yVel;
+    data->f_xpos = flame->getXpos();
+    data->f_ypos = flame->getYpos();
+    data->_flameOn = flameOn;
+    
+    if(isHost)
     {
-        flame->setYpos(p1Y+(ballY-p1Y)/2);
+        SDLNet_TCP_Send(client, data, 44);
+        if( xVel == LEFT_SPIKE_XVEL || xVel == RIGHT_SPIKE_XVEL || xVel == DOWN_SPIKE_XVEL || xVel == BASIC_SPIKE_XVEL ||
+           yVel == BASIC_SPIKE_YVEL || yVel == DOWN_SPIKE_YVEL || yVel == SPIKE_YVEL )
+        {
+            isTrailing = true;
+        }
     }
-    if(ballY < p1Y)
+    if(isGuest)
     {
-        flame->setYpos(p1Y-(p1Y-ballY)/2);
+        SDLNet_TCP_Recv(client, data, 44);
+        xpos = data->b_xpos;
+        ypos = data->b_ypos;
+        xVel = data->b_xVel;
+        yVel = data->b_yVel;
+        flame->setXpos(data->f_xpos);
+        flame->setYpos(data->f_ypos);
+        
+        flameOn = data->_flameOn;
+        flameStartTime = SDL_GetTicks();
+        flame->update();
+        
+        if(flameOn)
+            setTrailing();
     }
 }

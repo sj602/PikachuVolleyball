@@ -3,7 +3,7 @@
 TTF_Font* Sans = nullptr;
 
 // for image
-SDL_Texture* TextureManager::loadTexture(const std::string fileName)
+SDL_Texture* TextureManager::loadTexture(const std::string& fileName)
 {
     const char *texture = fileName.c_str();
     SDL_Surface *tempSurface = IMG_Load(texture);
@@ -17,7 +17,7 @@ SDL_Texture* TextureManager::loadTexture(const std::string fileName)
 };
 
 // for fonts
-SDL_Texture* TextureManager::loadFont(const std::string text)
+SDL_Texture* TextureManager::loadFont(const std::string& text)
 {
     const char *str = text.c_str();
     if(!TTF_WasInit())
@@ -37,7 +37,7 @@ SDL_Texture* TextureManager::loadFont(const std::string text)
     
     return message;
 };
-SDL_Texture* TextureManager::loadFont(const std::string text, SDL_Color textColor)
+SDL_Texture* TextureManager::loadFont(const std::string& text, SDL_Color& textColor)
 {
     const char *str = text.c_str();
     if(!TTF_WasInit())

@@ -15,10 +15,10 @@ OptionScreen::OptionScreen(SDL_Renderer *renderer, int& targetScore): Screen(ren
     std::cout << "OptionScreen constructor()!" << std::endl;
     score = std::to_string(targetScore);
     
-    setScore = new GameObject("Set Score", 100, MODE_HEIGHT, 100, 200);
+    setScore = new GameObject("Set Score", 100, MODE_HEIGHT, 100, 200, white);
     setScoreDigit = new GameObject(score, 50, MODE_HEIGHT, 300, 200, black);
-    backButton = new GameObject("Back", 100, MODE_HEIGHT, 350, 500);
-    warning = new GameObject("Please set score...", 400, 100, 100, 100, black);
+    backButton = new GameObject("Back", 100, MODE_HEIGHT, 350, 500, white);
+    warning = new GameObject("Please set scores..", 400, 100, 30, 30, white);
 }
 
 OptionScreen::~OptionScreen()
@@ -79,6 +79,7 @@ void OptionScreen::update()
     }
     if(!isValid)
         warning->update();
+
     screen->update();
     arrow->update();
     setScore->update();
@@ -88,18 +89,19 @@ void OptionScreen::update()
 
 void OptionScreen::render()
 {
-    SDL_RenderClear(rend);
+    SDL_RenderClear(renderer);
     
     // this is where we put things to render
-    if(!isValid)
-        warning->render();
-    screen->render();
+        screen->render();
     setScore->render();
     setScoreDigit->render();
     backButton->render();
     arrow->render();
     
-    SDL_RenderPresent(rend);
+    if(!isValid)
+        warning->render();
+
+    SDL_RenderPresent(renderer);
 }
 
 bool OptionScreen::checkValid()
@@ -110,5 +112,8 @@ bool OptionScreen::checkValid()
         return false;
     }
     else
+    {
+        isValid = true;
         return true;
+    }
 }

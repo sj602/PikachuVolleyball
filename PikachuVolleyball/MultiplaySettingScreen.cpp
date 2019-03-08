@@ -1,3 +1,4 @@
+#include <regex>
 #include "GameObject.h"
 #include "MultiplaySettingScreen.h"
 
@@ -13,19 +14,21 @@ GameObject *portValue;
 GameObject *connect;
 GameObject *waiting;
 
-MultiplaySettingScreen::MultiplaySettingScreen(SDL_Renderer *renderer): Screen(renderer)
+std::regex ipReg("[0-9.]");
+std::regex portReg("[0-9]");
+
+MultiplaySettingScreen::MultiplaySettingScreen(SDL_Renderer* _renderer): Screen(_renderer)
 {
     std::cout << "MultiplaySettingScreen constructor()!" << std::endl;
 
-    host = new GameObject("Host mode", MODE_WIDTH, MODE_HEIGHT, 300, 330);
-    guest = new GameObject("Guest mode", MODE_WIDTH, MODE_HEIGHT, 300, 390);
-    ipInput = new GameObject("Connecting IP: ", MODE_WIDTH, MODE_HEIGHT, 100, 200);
+    host = new GameObject("Host mode", MODE_WIDTH, MODE_HEIGHT, 300, 330, white);
+    guest = new GameObject("Guest mode", MODE_WIDTH, MODE_HEIGHT, 300, 390, white);
+    ipInput = new GameObject("Connecting IP: ", MODE_WIDTH, MODE_HEIGHT, 100, 200, white);
     ipValue = new GameObject(connectingIp, TEXT_WIDTH, TEXT_HEIGHT, 300, 200, black);
-    portInput = new GameObject("Connecting PORT: ", MODE_WIDTH, MODE_HEIGHT, 100, 250);
+    portInput = new GameObject("Connecting PORT: ", MODE_WIDTH, MODE_HEIGHT, 100, 250, white);
     portValue = new GameObject(connectingPort, MODE_WIDTH, MODE_HEIGHT, 300, 250, black);
-    waiting = new GameObject("Waiting...", MODE_WIDTH, MODE_HEIGHT, 300, 500);
-    connect = new GameObject("Connect!", MODE_WIDTH, MODE_HEIGHT, 300, 500);
-    
+    waiting = new GameObject("Waiting...", MODE_WIDTH, MODE_HEIGHT, 300, 500, white);
+    connect = new GameObject("Connect!", MODE_WIDTH, MODE_HEIGHT, 300, 500, white);
 }
 
 MultiplaySettingScreen::~MultiplaySettingScreen()
@@ -45,7 +48,7 @@ MultiplaySettingScreen::~MultiplaySettingScreen()
     delete connect;
 }
 
-void MultiplaySettingScreen::handleEvents(const Uint8 *keystate, bool &isSelecting, bool &isSingle, bool &isMulti)
+void MultiplaySettingScreen::handleEvents(const Uint8*& keystate, bool& isSelecting, bool& isSingle, bool& isMulti, bool& isHost, bool& isGuest, bool& isMultiConnected, Player* p, TCPsocket& client)
 {
     SDL_Event event;
     SDL_WaitEvent(&event);
@@ -72,9 +75,13 @@ void MultiplaySettingScreen::handleEvents(const Uint8 *keystate, bool &isSelecti
             }
             if(isGuest)
             {
-                arrow->setXpos(60);
-                arrow->setYpos(210);
-                if(arrow->getYpos() == 210 && keystate[SDL_SCANCODE_BACKSPACE] && connectingIp.length() > 0)
+                if(isInitial)
+                {
+                    arrow->setXpos(60);
+                    arrow->setYpos(210);
+                    isInitial = false;
+                }
+                if(keystate[SDL_SCANCODE_BACKSPACE] && arrow->getYpos() == 210 && connectingIp.length() > 0)
                 {
                     connectingIp = connectingIp.substr(0, connectingIp.length()-1);
                     ipValue->setText(connectingIp, black);
@@ -96,25 +103,32 @@ void MultiplaySettingScreen::handleEvents(const Uint8 *keystate, bool &isSelecti
                     arrow->setYpos(510);
                     break;
                 }
-                if(keystate[SDL_SCANCODE_UP] && arrow->getYpos() == 500)
+                if(keystate[SDL_SCANCODE_UP] && arrow->getYpos() == 510)
                 {
                     arrow->setXpos(60);
                     arrow->setYpos(260);
                     break;
                 }
-                if(keystate[SDL_SCANCODE_RETURN] && arrow->getYpos() == 500)
+                if(keystate[SDL_SCANCODE_RETURN] && arrow->getYpos() == 510)
                 {
-                    clienting();
+                    clienting(isMultiConnected, p, client);
                     break;
                 }
             }
         
         case SDL_TEXTINPUT:
             SDL_StartTextInput();
-            connectingIp += event.text.text;
-            ipValue->setText(connectingIp, black);
-//            system("clear");
-            std::cout << connectingIp << std::endl;
+
+            if(arrow->getYpos() == 210 && connectingIp.length() <= 15 && std::regex_match(event.text.text, ipReg))
+            {
+                connectingIp += event.text.text;
+                ipValue->setText(connectingIp, black);
+            }
+            if(arrow->getYpos() == 260 && connectingPort.length() <= 2 && std::regex_match(event.text.text, portReg))
+            {
+                connectingPort += event.text.text;
+                portValue->setText(connectingPort, black);
+            }
             break;
         default:
             break;
@@ -131,12 +145,11 @@ void MultiplaySettingScreen::update()
     portInput->update();
     portValue->update();
     arrow->update();
-    
 }
 
-void MultiplaySettingScreen::render()
+void MultiplaySettingScreen::render(bool& isMultiConnected, bool& isHost, bool& isGuest, Player* p, TCPsocket& server, TCPsocket& client)
 {
-    SDL_RenderClear(rend);
+    SDL_RenderClear(renderer);
     
     // this is where we put things to render
     screen->render();
@@ -166,32 +179,36 @@ void MultiplaySettingScreen::render()
         arrow->render();
     }
     
-    SDL_RenderPresent(rend);
+    SDL_RenderPresent(renderer);
     if(isHost)
-        hosting();
-    if(isGuest)
-        clienting();
+        hosting(isMultiConnected, p, server, client);
 }
 
-TCPsocket MultiplaySettingScreen::getServer()
+SDLNet_SocketSet& MultiplaySettingScreen::getServerSocketSet()
 {
-    return server;
+    return serverSocketSet;
 }
 
-TCPsocket MultiplaySettingScreen::getClient()
-{
-    return client;
-}
-
-void MultiplaySettingScreen::hosting()
+void MultiplaySettingScreen::hosting(bool& isMultiConnected, Player* p, TCPsocket& server, TCPsocket& client)
 {
     if (SDLNet_Init() == -1)
         std::cout << "SDLNET init failed" << std::endl;
     
     IPaddress ip;
-    SDLNet_ResolveHost(&ip, NULL, 80);
-    server = SDLNet_TCP_Open(&ip);
     
+    if(SDLNet_ResolveHost(&ip, NULL, atoi(connectingPort.c_str())) == -1)
+        std::cout << "Failed to open port: " << connectingPort << std::endl;
+    
+    server = SDLNet_TCP_Open(&ip);
+    if(server == NULL)
+        std::cout << "Failed to open port for listening: " << SDL_GetError() << std::endl;
+    
+    serverSocketSet = SDLNet_AllocSocketSet(2);
+    if(serverSocketSet == NULL)
+        std::cout << "Failed to open socket set: " << SDL_GetError() << std::endl;
+
+    SDLNet_TCP_AddSocket(serverSocketSet, server);
+
     // waiting for any client...
     SDL_Event event;
     while(SDL_WaitEvent(&event))
@@ -199,25 +216,47 @@ void MultiplaySettingScreen::hosting()
         client = SDLNet_TCP_Accept(server);
         if(client)
         {
+            isMultiConnected = true;
+            p->setFlag('R');
+            p->setxVel(0);
+
             SDLNet_TCP_Send(client, "Hello", 6);
-            SDLNet_TCP_Close(client);
             break;
         }
     }
 }
 
-void MultiplaySettingScreen::clienting()
+void MultiplaySettingScreen::clienting(bool& isMultiConnected, Player* p, TCPsocket& client)
 {
-    std::cout << "connect!" << std::endl;
     if (SDLNet_Init() == -1)
         std::cout << "SDLNET init failed" << std::endl;
 
     IPaddress ip;
-    SDLNet_ResolveHost(&ip, connectingIp.c_str(), atoi(connectingPort.c_str()));
+    if(SDLNet_ResolveHost(&ip, connectingIp.c_str(), atoi(connectingPort.c_str())) == -1)
+    {
+        std::cout << "Failed to open port: " << connectingPort << std::endl;
+    }
+    
     client = SDLNet_TCP_Open(&ip);
-    char text[100];
-    SDLNet_TCP_Recv(client, text, 100);
-    std::cout << text;
-}
+    if(!client)
+    {
+        std::cout << "Failed to connect to port: " << connectingPort << " and : " << SDL_GetError() << std::endl;
+        return;
+    }
+    else
+    {
+        isMultiConnected = true;
+        p->setFlag('R');
+        p->setxVel(0);
 
+        char text[100];
+        int num_recv = SDLNet_TCP_Recv(client, text, 100);
+        
+        if(num_recv <= 0)
+            std::cout << "Received data failed: " << SDL_GetError() << std::endl;
+        else
+            std::cout << text << std::endl;
+        
+    }
+}
 
