@@ -38,6 +38,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		EF01058522323D3900729214 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = "../../../Downloads/PikachuVolleyball-master/README.md"; sourceTree = "<group>"; };
 		EF63CB0622227B86003AA8B8 /* OptionScreen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OptionScreen.cpp; sourceTree = "<group>"; };
 		EF63CB0722227B86003AA8B8 /* OptionScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OptionScreen.h; sourceTree = "<group>"; };
 		EFABDAB821F6B108005B08EA /* PikachuVolleyball */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PikachuVolleyball; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -89,6 +90,7 @@
 		EFABDAAF21F6B108005B08EA = {
 			isa = PBXGroup;
 			children = (
+				EF01058522323D3900729214 /* README.md */,
 				EFABDABA21F6B108005B08EA /* PikachuVolleyball */,
 				EFABDAB921F6B108005B08EA /* Products */,
 				EFABDAC221F6B171005B08EA /* Frameworks */,
